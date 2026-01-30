@@ -789,6 +789,26 @@
                     </div>
                 </div>
 
+                <div class="alert alert-info" style="margin-bottom: 20px;">
+                    <strong>💡 מגבלות תורנויות (כל השדות אופציונליים):</strong><br>
+                    אם לא מוגדר - ישתמש במגבלה הכללית מהכללים
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>מקסימום תורנויות סה"כ בחודש:</label>
+                        <input type="number" id="individualMaxShifts" placeholder="לדוגמה: 8" min="0">
+                    </div>
+                    <div class="form-group">
+                        <label>מקסימום תורנויות בימי חול (א'-ה'):</label>
+                        <input type="number" id="maxWeekdayShifts" placeholder="לדוגמה: 5" min="0">
+                    </div>
+                    <div class="form-group">
+                        <label>מקסימום תורנויות בסופ"ש (ו'-ש'):</label>
+                        <input type="number" id="maxWeekendShifts" placeholder="לדוגמה: 3" min="0">
+                    </div>
+                </div>
+
                 <div class="form-group">
                     <label>עמודות שהרופא/ה יכול/ה לעבוד בהן:</label>
                     <div id="doctorColumnsCheckboxes" class="checkbox-group">
@@ -1108,6 +1128,12 @@
         // Initialize
         window.onload = function() {
             loadData();
+            
+            // Pre-load data if empty (first time use)
+            if (doctors.length === 0 && columns.length === 0) {
+                initializeDefaultData();
+            }
+            
             updateColumnSetup();
             updateDoctorColumnsCheckboxes();
             updateDoctorSelect();
@@ -1120,6 +1146,58 @@
             document.getElementById('setupYear').value = currentYear;
             document.getElementById('setupMonth').value = currentMonth;
         };
+
+        function initializeDefaultData() {
+            // Set up 4 columns
+            columns = [
+                {id: 0, name: 'תורן מיון 2'},
+                {id: 1, name: 'תורן מיון 3'},
+                {id: 2, name: 'תורן מיון 4'},
+                {id: 3, name: 'תורן מחלקה 5'}
+            ];
+
+            // Set up 21 doctors with their allowed columns
+            const doctorData = [
+                {name: 'מור', allowedColumns: [0, 1]},
+                {name: 'וילק', allowedColumns: [0, 1]},
+                {name: 'חמרני', allowedColumns: [0, 1]},
+                {name: 'מרקס', allowedColumns: [0, 1]},
+                {name: 'מושקוביץ', allowedColumns: [0, 1]},
+                {name: 'מילון', allowedColumns: [0, 1]},
+                {name: 'אלישיב', allowedColumns: [0, 1]},
+                {name: 'פרנקל', allowedColumns: [0, 1]},
+                {name: 'ויקטור', allowedColumns: [0, 1]},
+                {name: 'ביבר', allowedColumns: [1]},
+                {name: 'נחשון', allowedColumns: [2, 3]},
+                {name: 'פארוג\'ה', allowedColumns: [2, 3]},
+                {name: 'לסרי', allowedColumns: [1]},
+                {name: 'הורביץ', allowedColumns: [2]},
+                {name: 'קס', allowedColumns: [2, 3]},
+                {name: 'פרנקל', allowedColumns: [2, 3]},
+                {name: 'נוי', allowedColumns: [2, 3]},
+                {name: 'אסולין', allowedColumns: [2, 3]},
+                {name: 'בר', allowedColumns: [3]},
+                {name: 'מוסטאפא', allowedColumns: [3]},
+                {name: 'יוגב', allowedColumns: [3]}
+            ];
+
+            doctors = doctorData.map((d, index) => ({
+                id: Date.now() + index,
+                name: d.name,
+                allowedColumns: d.allowedColumns,
+                maxShifts: null,
+                maxWeekdayShifts: null,
+                maxWeekendShifts: null
+            }));
+
+            // Initialize preferences for all doctors
+            doctors.forEach(d => {
+                preferences[d.id] = {};
+            });
+
+            saveData();
+            console.log('✅ Initialized with 21 doctors and 4 columns');
+        }
 
         function switchTab(tabName) {
             document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
@@ -1297,16 +1375,27 @@
                 return;
             }
 
+            // Get individual limits (optional)
+            const individualMaxShifts = parseInt(document.getElementById('individualMaxShifts').value) || null;
+            const maxWeekdayShifts = parseInt(document.getElementById('maxWeekdayShifts').value) || null;
+            const maxWeekendShifts = parseInt(document.getElementById('maxWeekendShifts').value) || null;
+
             const doctor = {
                 id: Date.now(),
                 name: name,
-                allowedColumns: allowedColumns
+                allowedColumns: allowedColumns,
+                maxShifts: individualMaxShifts, // Total limit
+                maxWeekdayShifts: maxWeekdayShifts, // Weekday limit (Sun-Thu)
+                maxWeekendShifts: maxWeekendShifts  // Weekend limit (Fri-Sat)
             };
 
             doctors.push(doctor);
             preferences[doctor.id] = {};
             
             document.getElementById('doctorName').value = '';
+            document.getElementById('individualMaxShifts').value = '';
+            document.getElementById('maxWeekdayShifts').value = '';
+            document.getElementById('maxWeekendShifts').value = '';
             columns.forEach(col => {
                 const checkbox = document.getElementById(`docCol${col.id}`);
                 if (checkbox) checkbox.checked = false;
@@ -1354,6 +1443,13 @@
                 
                 const hasNoColumns = allowedCols.length === 0;
                 
+                // Build limits text
+                let limitsText = '';
+                if (doctor.maxShifts) limitsText += `סה"כ: ${doctor.maxShifts}`;
+                if (doctor.maxWeekdayShifts) limitsText += (limitsText ? ' | ' : '') + `חול: ${doctor.maxWeekdayShifts}`;
+                if (doctor.maxWeekendShifts) limitsText += (limitsText ? ' | ' : '') + `סופ"ש: ${doctor.maxWeekendShifts}`;
+                if (!limitsText) limitsText = 'לפי מגבלה כללית';
+                
                 return `
                     <div class="doctor-card" style="${hasNoColumns ? 'border-color: var(--danger); border-width: 3px;' : ''}">
                         <div class="doctor-header">
@@ -1375,6 +1471,9 @@
                             }).join('')}
                         </div>
                         ` : '<div class="alert alert-warning" style="margin-top: 10px; font-size: 0.85em;">לחץ על "ערוך" ✏️ כדי להוסיף עמודות</div>'}
+                        <div class="doctor-info" style="margin-top: 10px;">
+                            <strong>מגבלות:</strong> <span style="color: var(--primary);">${limitsText}</span>
+                        </div>
                     </div>
                 `;
             }).join('');
@@ -1396,6 +1495,9 @@
 
             // Fill the form with doctor's data
             document.getElementById('doctorName').value = doctor.name;
+            document.getElementById('individualMaxShifts').value = doctor.maxShifts || '';
+            document.getElementById('maxWeekdayShifts').value = doctor.maxWeekdayShifts || '';
+            document.getElementById('maxWeekendShifts').value = doctor.maxWeekendShifts || '';
             
             // Check the appropriate checkboxes
             columns.forEach(col => {
@@ -1648,6 +1750,28 @@
         const ADMIN_PASSWORD = 'manager2026'; // שנה את זה לסיסמה שלך!
         let isAdminLoggedIn = false;
 
+        // Helper function to check if date is weekend (Friday or Saturday in Israel)
+        function isWeekend(dateString) {
+            const date = new Date(dateString);
+            const day = date.getDay();
+            return day === 5 || day === 6; // Friday = 5, Saturday = 6
+        }
+
+        // Helper function to check if doctor can work based on weekday/weekend limits
+        function canDoctorWorkOnDate(doctor, date, currentWeekdayCount, currentWeekendCount) {
+            const isWeekendDay = isWeekend(date);
+            
+            if (isWeekendDay && doctor.maxWeekendShifts !== null && doctor.maxWeekendShifts !== undefined) {
+                return currentWeekendCount < doctor.maxWeekendShifts;
+            }
+            
+            if (!isWeekendDay && doctor.maxWeekdayShifts !== null && doctor.maxWeekdayShifts !== undefined) {
+                return currentWeekdayCount < doctor.maxWeekdayShifts;
+            }
+            
+            return true; // No specific limit for this day type
+        }
+
         function generateSchedule() {
             // Check if admin is logged in
             if (!isAdminLoggedIn) {
@@ -1715,12 +1839,16 @@
 
             schedule = {};
             const doctorShifts = {};
+            const doctorWeekdayShifts = {}; // Track weekday shifts separately
+            const doctorWeekendShifts = {}; // Track weekend shifts separately
             const doctorDailyShifts = {};
             const doctorLastShiftDate = {};
             const weeklyAssignments = {}; // Track assignments by day of week for column links
 
             doctors.forEach(d => {
                 doctorShifts[d.id] = 0;
+                doctorWeekdayShifts[d.id] = 0;
+                doctorWeekendShifts[d.id] = 0;
                 doctorDailyShifts[d.id] = {};
                 doctorLastShiftDate[d.id] = null;
                 weeklyAssignments[d.id] = {}; // {dayOfWeek: {sourceColumnId: [dates]}}
@@ -1754,8 +1882,16 @@
                             continue; // Skip this doctor completely for blocked dates
                         }
 
-                        // Check monthly limit
-                        if (doctorShifts[doctor.id] >= rules.maxShiftsPerMonth) continue;
+                        // Check monthly limit (use individual limit if set, otherwise use global)
+                        const doctorMaxShifts = doctor.maxShifts !== null && doctor.maxShifts !== undefined 
+                            ? doctor.maxShifts 
+                            : rules.maxShiftsPerMonth;
+                        if (doctorShifts[doctor.id] >= doctorMaxShifts) continue;
+
+                        // **NEW: Check weekday/weekend specific limits**
+                        if (!canDoctorWorkOnDate(doctor, date, doctorWeekdayShifts[doctor.id], doctorWeekendShifts[doctor.id])) {
+                            continue;
+                        }
 
                         // **CRITICAL: Check if doctor already assigned to ANY column today**
                         // A doctor can only work in ONE column per day
@@ -1825,6 +1961,14 @@
                     if (bestDoctor) {
                         schedule[date][column.id] = bestDoctor.id;
                         doctorShifts[bestDoctor.id]++;
+                        
+                        // Track weekday vs weekend
+                        if (isWeekend(date)) {
+                            doctorWeekendShifts[bestDoctor.id]++;
+                        } else {
+                            doctorWeekdayShifts[bestDoctor.id]++;
+                        }
+                        
                         doctorDailyShifts[bestDoctor.id][date] = (doctorDailyShifts[bestDoctor.id][date] || 0) + 1;
                         doctorLastShiftDate[bestDoctor.id] = date;
                         totalAssignments++;
@@ -1852,15 +1996,15 @@
             }
 
             // Second pass - apply column links
-            applyColumnLinks(weeklyAssignments, doctorShifts, doctorDailyShifts);
+            applyColumnLinks(weeklyAssignments, doctorShifts, doctorDailyShifts, doctorWeekdayShifts, doctorWeekendShifts);
 
             // **Third pass - Balance the schedule to make it more equal**
-            balanceSchedule(doctorShifts, doctorDailyShifts);
+            balanceSchedule(doctorShifts, doctorDailyShifts, doctorWeekdayShifts, doctorWeekendShifts);
 
-            displaySchedule(doctorShifts);
+            displaySchedule(doctorShifts, doctorWeekdayShifts, doctorWeekendShifts);
         }
 
-        function balanceSchedule(doctorShifts, doctorDailyShifts) {
+        function balanceSchedule(doctorShifts, doctorDailyShifts, doctorWeekdayShifts, doctorWeekendShifts) {
             console.log('Starting balance phase...');
             
             // Calculate average shifts per doctor
@@ -1903,7 +2047,17 @@
                             if (!doctor.allowedColumns || !doctor.allowedColumns.includes(column.id)) continue;
                             if (preferences[doctor.id] && preferences[doctor.id][date] === 'blocked') continue;
                             if (doctorDailyShifts[doctor.id][date]) continue; // Already has shift today
-                            if (doctorShifts[doctor.id] >= maxAcceptable) continue;
+                            
+                            // Use individual max if set, otherwise use maxAcceptable
+                            const doctorMaxLimit = doctor.maxShifts !== null && doctor.maxShifts !== undefined 
+                                ? doctor.maxShifts 
+                                : maxAcceptable;
+                            if (doctorShifts[doctor.id] >= doctorMaxLimit) continue;
+                            
+                            // **Check weekday/weekend limits**
+                            if (!canDoctorWorkOnDate(doctor, date, doctorWeekdayShifts[doctor.id], doctorWeekendShifts[doctor.id])) {
+                                continue;
+                            }
                             
                             // Quick check for rest days (only check previous day)
                             if (rules.minRestDays > 0) {
@@ -1935,6 +2089,14 @@
                             if (doctorShifts[doctor.id] < avgShifts) {
                                 schedule[date][column.id] = doctor.id;
                                 doctorShifts[doctor.id]++;
+                                
+                                // Track weekday vs weekend
+                                if (isWeekend(date)) {
+                                    doctorWeekendShifts[doctor.id]++;
+                                } else {
+                                    doctorWeekdayShifts[doctor.id]++;
+                                }
+                                
                                 doctorDailyShifts[doctor.id][date] = 1;
                                 console.log(`Balance: Assigned ${doctor.name} to ${column.name} on ${date}`);
                                 break; // Found a doctor for this slot, move to next slot
@@ -1947,7 +2109,7 @@
             console.log(`Balance phase complete (${balanceAttempts} attempts)`);
         }
 
-        function applyColumnLinks(weeklyAssignments, doctorShifts, doctorDailyShifts) {
+        function applyColumnLinks(weeklyAssignments, doctorShifts, doctorDailyShifts, doctorWeekdayShifts, doctorWeekendShifts) {
             if (columnLinks.length === 0) return;
 
             // For each column link
@@ -2014,7 +2176,7 @@
             }
         }
 
-        function displaySchedule(doctorShifts) {
+        function displaySchedule(doctorShifts, doctorWeekdayShifts, doctorWeekendShifts) {
             // Generate stats
             const totalShifts = Object.values(doctorShifts).reduce((a, b) => a + b, 0);
             const avgShifts = doctors.length > 0 ? (totalShifts / doctors.length).toFixed(1) : 0;
@@ -2075,15 +2237,20 @@
                         const avgShifts = totalShifts / doctors.length;
                         const diff = count - avgShifts;
                         
+                        // Use individual max if set
+                        const maxLimit = doctor.maxShifts !== null && doctor.maxShifts !== undefined 
+                            ? doctor.maxShifts 
+                            : rules.maxShiftsPerMonth;
+                        
                         let statusColor = 'inherit';
                         let statusText = '';
                         
                         if (count < rules.minShiftsPerMonth) {
                             statusColor = 'var(--danger)';
-                            statusText = '⚠️ מתחת למינימום';
-                        } else if (count > rules.maxShiftsPerMonth) {
+                            statusText = `⚠️ מתחת למינימום (מינ׳ ${rules.minShiftsPerMonth})`;
+                        } else if (count > maxLimit) {
                             statusColor = 'var(--danger)';
-                            statusText = '⚠️ מעל מקסימום';
+                            statusText = `⚠️ מעל מקסימום (מקס׳ ${maxLimit})`;
                         } else if (Math.abs(diff) < 0.5) {
                             statusColor = 'var(--success)';
                             statusText = '✅ מאוזן מעולה';
@@ -2098,9 +2265,13 @@
                             statusText = diff > 0 ? '❌ הרבה מעל הממוצע' : '❌ הרבה מתחת לממוצע';
                         }
                         
+                        const limitText = doctor.maxShifts !== null && doctor.maxShifts !== undefined 
+                            ? ` (מקס׳ אישי: ${doctor.maxShifts})` 
+                            : '';
+                        
                         return `
                             <tr>
-                                <td><strong>${doctor.name}</strong></td>
+                                <td><strong>${doctor.name}${limitText}</strong></td>
                                 <td style="text-align: center; color: ${statusColor}; font-weight: bold; font-size: 1.2em;">${count}</td>
                                 <td style="color: ${statusColor};">${statusText}</td>
                             </tr>
@@ -2167,11 +2338,18 @@
 
             doctors.forEach(doctor => {
                 const count = doctorShiftCounts[doctor.id];
-                if (count < rules.minShiftsPerMonth) {
-                    errors.push(`${doctor.name}: פחות מהמינימום הנדרש (${count}/${rules.minShiftsPerMonth})`);
+                
+                // Use individual limit if set
+                const minLimit = rules.minShiftsPerMonth;
+                const maxLimit = doctor.maxShifts !== null && doctor.maxShifts !== undefined 
+                    ? doctor.maxShifts 
+                    : rules.maxShiftsPerMonth;
+                
+                if (count < minLimit) {
+                    errors.push(`${doctor.name}: פחות מהמינימום הנדרש (${count}/${minLimit})`);
                 }
-                if (count > rules.maxShiftsPerMonth) {
-                    errors.push(`${doctor.name}: יותר מהמקסימום המותר (${count}/${rules.maxShiftsPerMonth})`);
+                if (count > maxLimit) {
+                    errors.push(`${doctor.name}: יותר מהמקסימום המותר (${count}/${maxLimit})`);
                 }
             });
 
