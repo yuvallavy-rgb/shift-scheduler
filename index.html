@@ -1757,6 +1757,13 @@
             return day === 5 || day === 6; // Friday = 5, Saturday = 6
         }
 
+        // Helper function to check if date is Thursday, Friday, or Saturday (less desirable days)
+        function isLessDesirableDay(dateString) {
+            const date = new Date(dateString);
+            const day = date.getDay();
+            return day === 4 || day === 5 || day === 6; // Thursday = 4, Friday = 5, Saturday = 6
+        }
+
         // Helper function to check if doctor can work based on weekday/weekend limits
         function canDoctorWorkOnDate(doctor, date, currentWeekdayCount, currentWeekendCount) {
             const isWeekendDay = isWeekend(date);
@@ -1770,6 +1777,34 @@
             }
             
             return true; // No specific limit for this day type
+        }
+
+        // Check if assigning this shift would create a 3-shift pattern (e.g., Thu-Sat-Mon)
+        function wouldCreate3ShiftPattern(doctorId, date, doctorDailyShifts, pattern3ShiftCount) {
+            const dateObj = new Date(date);
+            
+            // Check for pattern: day X, day X+2, day X+4
+            // Example: Thu (day 5), Sat (day 7), Mon (day 9)
+            const dayNum = dateObj.getDate();
+            
+            // Check if this is the third shift in a pattern
+            const date2DaysAgo = new Date(dateObj);
+            date2DaysAgo.setDate(dayNum - 2);
+            const date2DaysAgoStr = date2DaysAgo.toISOString().split('T')[0];
+            
+            const date4DaysAgo = new Date(dateObj);
+            date4DaysAgo.setDate(dayNum - 4);
+            const date4DaysAgoStr = date4DaysAgo.toISOString().split('T')[0];
+            
+            if (doctorDailyShifts[doctorId][date2DaysAgoStr] && doctorDailyShifts[doctorId][date4DaysAgoStr]) {
+                // This would be the 3rd shift in a pattern
+                const currentCount = pattern3ShiftCount[doctorId] || 0;
+                if (currentCount >= 2) {
+                    return true; // Already has 2 such patterns this month
+                }
+            }
+            
+            return false;
         }
 
         function generateSchedule() {
@@ -1841,16 +1876,20 @@
             const doctorShifts = {};
             const doctorWeekdayShifts = {}; // Track weekday shifts separately
             const doctorWeekendShifts = {}; // Track weekend shifts separately
+            const doctorThurFriSatShifts = {}; // Track Thu/Fri/Sat shifts separately for balance
             const doctorDailyShifts = {};
             const doctorLastShiftDate = {};
+            const pattern3ShiftCount = {}; // Track how many 3-shift patterns each doctor has
             const weeklyAssignments = {}; // Track assignments by day of week for column links
 
             doctors.forEach(d => {
                 doctorShifts[d.id] = 0;
                 doctorWeekdayShifts[d.id] = 0;
                 doctorWeekendShifts[d.id] = 0;
+                doctorThurFriSatShifts[d.id] = 0;
                 doctorDailyShifts[d.id] = {};
                 doctorLastShiftDate[d.id] = null;
+                pattern3ShiftCount[d.id] = 0;
                 weeklyAssignments[d.id] = {}; // {dayOfWeek: {sourceColumnId: [dates]}}
             });
 
@@ -1925,31 +1964,48 @@
                         }
                         if (consecutiveDays >= rules.maxConsecutiveDays) continue;
 
+                        // **NEW: Check 3-shift pattern (max 2 times per month)**
+                        if (wouldCreate3ShiftPattern(doctor.id, date, doctorDailyShifts, pattern3ShiftCount)) {
+                            continue; // Skip - would exceed 3-shift pattern limit
+                        }
+
                         // Calculate score
                         let score = 0;
 
-                        // **PRIORITY 1: Balance workload - heavily prioritize doctors with fewer shifts**
-                        // This is the most important factor for equality
+                        // **PRIORITY 1: Balance workload - TIGHTER CONSTRAINTS**
+                        // Maximum difference of 1 shift between any two doctors
                         const currentShifts = doctorShifts[doctor.id];
-                        const avgShifts = Object.values(doctorShifts).reduce((a, b) => a + b, 0) / doctors.length;
+                        const minShifts = Math.min(...Object.values(doctorShifts));
+                        const maxShifts = Math.max(...Object.values(doctorShifts));
                         
-                        // Give huge bonus to doctors below average
-                        if (currentShifts < avgShifts) {
-                            score += (avgShifts - currentShifts) * 100;
-                        } else {
-                            // Heavy penalty for doctors above average
-                            score -= (currentShifts - avgShifts) * 100;
+                        // If assigning this would create a gap of 2+ shifts, heavily penalize
+                        if (currentShifts > minShifts) {
+                            score -= (currentShifts - minShifts) * 500; // Very heavy penalty
                         }
                         
-                        // Additional penalty based on absolute number of shifts
-                        score -= currentShifts * 50;
+                        // Bonus for doctors with fewer shifts
+                        score += (maxShifts - currentShifts) * 200;
+                        
+                        // **PRIORITY 2: Balance Thursday/Friday/Saturday shifts**
+                        // These are less desirable, so distribute them evenly
+                        if (isLessDesirableDay(date)) {
+                            const avgThurFriSat = Object.values(doctorThurFriSatShifts).reduce((a, b) => a + b, 0) / doctors.length;
+                            const currentThurFriSat = doctorThurFriSatShifts[doctor.id];
+                            
+                            // Strong bonus for doctors with fewer Thu/Fri/Sat shifts
+                            if (currentThurFriSat < avgThurFriSat) {
+                                score += (avgThurFriSat - currentThurFriSat) * 150;
+                            } else {
+                                score -= (currentThurFriSat - avgThurFriSat) * 150;
+                            }
+                        }
 
-                        // **PRIORITY 2: Preferences - important but secondary to balance**
+                        // **PRIORITY 3: Preferences - important but secondary to balance**
                         if (preferences[doctor.id] && preferences[doctor.id][date] === 'preferred') {
-                            score += 30; // Reduced from 100 to make balance more important
+                            score += 30;
                         }
 
-                        // **PRIORITY 3: Daily balance - slight preference**
+                        // **PRIORITY 4: Daily balance - slight preference**
                         score -= dailyCount * 10;
 
                         if (score > bestScore) {
@@ -1969,9 +2025,29 @@
                             doctorWeekdayShifts[bestDoctor.id]++;
                         }
                         
+                        // Track Thursday/Friday/Saturday separately for balance
+                        if (isLessDesirableDay(date)) {
+                            doctorThurFriSatShifts[bestDoctor.id]++;
+                        }
+                        
                         doctorDailyShifts[bestDoctor.id][date] = (doctorDailyShifts[bestDoctor.id][date] || 0) + 1;
                         doctorLastShiftDate[bestDoctor.id] = date;
                         totalAssignments++;
+                        
+                        // Check if this creates a new 3-shift pattern and track it
+                        const dateObj = new Date(date);
+                        const dayNum = dateObj.getDate();
+                        const date2DaysAgo = new Date(dateObj);
+                        date2DaysAgo.setDate(dayNum - 2);
+                        const date2DaysAgoStr = date2DaysAgo.toISOString().split('T')[0];
+                        const date4DaysAgo = new Date(dateObj);
+                        date4DaysAgo.setDate(dayNum - 4);
+                        const date4DaysAgoStr = date4DaysAgo.toISOString().split('T')[0];
+                        
+                        if (doctorDailyShifts[bestDoctor.id][date2DaysAgoStr] && 
+                            doctorDailyShifts[bestDoctor.id][date4DaysAgoStr]) {
+                            pattern3ShiftCount[bestDoctor.id]++;
+                        }
                         
                         // Track weekly assignments for column links
                         if (!weeklyAssignments[bestDoctor.id][dayOfWeek]) {
@@ -2010,18 +2086,27 @@
             // Calculate average shifts per doctor
             const totalShifts = Object.values(doctorShifts).reduce((a, b) => a + b, 0);
             const avgShifts = totalShifts / doctors.length;
-            const minAcceptable = Math.max(rules.minShiftsPerMonth, Math.floor(avgShifts * 0.8));
-            const maxAcceptable = Math.min(rules.maxShiftsPerMonth, Math.ceil(avgShifts * 1.2));
             
-            console.log(`Average shifts: ${avgShifts.toFixed(1)}, Range: ${minAcceptable}-${maxAcceptable}`);
+            // **NEW: Enforce maximum difference of 1 shift**
+            const minShifts = Math.min(...Object.values(doctorShifts));
+            const maxShifts = Math.max(...Object.values(doctorShifts));
+            const maxAllowedDifference = 1;
             
-            // Get doctors who need more shifts (sorted by fewest shifts first)
+            console.log(`Average shifts: ${avgShifts.toFixed(1)}, Min: ${minShifts}, Max: ${maxShifts}`);
+            
+            // If difference is already 1 or less, no need to balance
+            if (maxShifts - minShifts <= maxAllowedDifference) {
+                console.log('Schedule already balanced (max difference: 1 shift)');
+                return;
+            }
+            
+            // Get doctors who need more shifts (only those with minShifts)
             const doctorsNeedingShifts = doctors
-                .filter(d => doctorShifts[d.id] < avgShifts && doctorShifts[d.id] < maxAcceptable)
+                .filter(d => doctorShifts[d.id] === minShifts)
                 .sort((a, b) => doctorShifts[a.id] - doctorShifts[b.id]);
             
             if (doctorsNeedingShifts.length === 0) {
-                console.log('All doctors are balanced, skipping balance phase');
+                console.log('All doctors are balanced');
                 return;
             }
             
@@ -2048,11 +2133,15 @@
                             if (preferences[doctor.id] && preferences[doctor.id][date] === 'blocked') continue;
                             if (doctorDailyShifts[doctor.id][date]) continue; // Already has shift today
                             
-                            // Use individual max if set, otherwise use maxAcceptable
+                            // Use individual max if set, otherwise use global max
                             const doctorMaxLimit = doctor.maxShifts !== null && doctor.maxShifts !== undefined 
                                 ? doctor.maxShifts 
-                                : maxAcceptable;
+                                : rules.maxShiftsPerMonth;
                             if (doctorShifts[doctor.id] >= doctorMaxLimit) continue;
+                            
+                            // **NEW: Only assign if doctor still has minShifts (strict balance)**
+                            const currentMinShifts = Math.min(...Object.values(doctorShifts));
+                            if (doctorShifts[doctor.id] > currentMinShifts) continue;
                             
                             // **Check weekday/weekend limits**
                             if (!canDoctorWorkOnDate(doctor, date, doctorWeekdayShifts[doctor.id], doctorWeekendShifts[doctor.id])) {
@@ -2085,8 +2174,9 @@
                                 if (consecutiveDays >= rules.maxConsecutiveDays) continue;
                             }
                             
-                            // Assign if this doctor still needs shifts
-                            if (doctorShifts[doctor.id] < avgShifts) {
+                            // Assign if this doctor has minimum shifts
+                            const currentMinShifts = Math.min(...Object.values(doctorShifts));
+                            if (doctorShifts[doctor.id] === currentMinShifts) {
                                 schedule[date][column.id] = doctor.id;
                                 doctorShifts[doctor.id]++;
                                 
@@ -2098,7 +2188,16 @@
                                 }
                                 
                                 doctorDailyShifts[doctor.id][date] = 1;
-                                console.log(`Balance: Assigned ${doctor.name} to ${column.name} on ${date}`);
+                                console.log(`Balance: Assigned ${doctor.name} to ${column.name} on ${date} (had ${currentMinShifts} shifts)`);
+                                
+                                // Check if we've achieved balance (max difference = 1)
+                                const newMin = Math.min(...Object.values(doctorShifts));
+                                const newMax = Math.max(...Object.values(doctorShifts));
+                                if (newMax - newMin <= 1) {
+                                    console.log('Achieved perfect balance! Stopping.');
+                                    return;
+                                }
+                                
                                 break; // Found a doctor for this slot, move to next slot
                             }
                         }
