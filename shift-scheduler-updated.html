@@ -1,0 +1,2648 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>מערכת שיבוץ תורנויות מתקדמת - מחלקת נשים</title>
+    <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;600;700&family=Varela+Round&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #1e3a5f;
+            --primary-light: #2e5a8f;
+            --secondary: #d35400;
+            --success: #27ae60;
+            --danger: #c0392b;
+            --warning: #f39c12;
+            --info: #3498db;
+            --light: #ecf0f1;
+            --dark: #2c3e50;
+            --border: #dee2e6;
+        }
+
+        body {
+            font-family: 'Varela Round', 'Heebo', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: var(--dark);
+        }
+
+        .container {
+            max-width: 1600px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.15);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+            color: white;
+            padding: 35px 45px;
+            position: relative;
+        }
+
+        .header h1 {
+            font-size: 2.3em;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .header p {
+            font-size: 1.05em;
+            opacity: 0.95;
+        }
+
+        .tabs {
+            display: flex;
+            background: #f8f9fa;
+            border-bottom: 3px solid var(--border);
+        }
+
+        .tab {
+            flex: 1;
+            padding: 18px;
+            text-align: center;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 1.05em;
+            transition: all 0.3s ease;
+            border: none;
+            background: transparent;
+            color: #6c757d;
+            position: relative;
+        }
+
+        .tab:hover {
+            background: rgba(30, 58, 95, 0.05);
+            color: var(--primary);
+        }
+
+        .tab.active {
+            color: var(--primary);
+            background: white;
+        }
+
+        .tab.active::after {
+            content: '';
+            position: absolute;
+            bottom: -3px;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: var(--primary);
+        }
+
+        .tab-content {
+            display: none;
+            padding: 35px 45px;
+            animation: fadeIn 0.4s ease;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .section {
+            background: #f8f9fa;
+            border-radius: 12px;
+            padding: 28px;
+            margin-bottom: 25px;
+            border: 2px solid var(--border);
+        }
+
+        .section h2 {
+            color: var(--primary);
+            margin-bottom: 22px;
+            font-size: 1.5em;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .section h2::before {
+            content: '';
+            width: 5px;
+            height: 28px;
+            background: var(--primary);
+            border-radius: 3px;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: var(--dark);
+            font-size: 0.95em;
+        }
+
+        input[type="text"],
+        input[type="number"],
+        select,
+        textarea {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid var(--border);
+            border-radius: 8px;
+            font-size: 1em;
+            font-family: inherit;
+            transition: all 0.3s ease;
+        }
+
+        input:focus,
+        select:focus,
+        textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(30, 58, 95, 0.1);
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        .checkbox-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-top: 10px;
+        }
+
+        .checkbox-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 15px;
+            background: white;
+            border: 2px solid var(--border);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .checkbox-item:hover {
+            border-color: var(--primary);
+            background: rgba(30, 58, 95, 0.05);
+        }
+
+        .checkbox-item input[type="checkbox"] {
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+        }
+
+        .btn {
+            padding: 12px 30px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: inherit;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+            color: white;
+            box-shadow: 0 4px 12px rgba(30, 58, 95, 0.3);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(30, 58, 95, 0.4);
+        }
+
+        .btn-success {
+            background: var(--success);
+            color: white;
+        }
+
+        .btn-danger {
+            background: var(--danger);
+            color: white;
+        }
+
+        .btn-secondary {
+            background: var(--secondary);
+            color: white;
+        }
+
+        .btn-small {
+            padding: 6px 14px;
+            font-size: 0.9em;
+        }
+
+        .doctors-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 18px;
+            margin-top: 20px;
+        }
+
+        .doctor-card {
+            background: white;
+            border: 2px solid var(--border);
+            border-radius: 10px;
+            padding: 18px;
+            transition: all 0.3s ease;
+        }
+
+        .doctor-card:hover {
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            border-color: var(--primary);
+            transform: translateY(-3px);
+        }
+
+        .doctor-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+
+        .doctor-name {
+            font-weight: 700;
+            font-size: 1.1em;
+            color: var(--primary);
+        }
+
+        .doctor-info {
+            font-size: 0.9em;
+            color: #6c757d;
+            margin-bottom: 8px;
+        }
+
+        .columns-badge {
+            display: inline-flex;
+            gap: 5px;
+            flex-wrap: wrap;
+            margin-top: 8px;
+        }
+
+        .column-tag {
+            background: var(--info);
+            color: white;
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 0.8em;
+            font-weight: 600;
+        }
+
+        .schedule-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        }
+
+        .schedule-table th {
+            background: var(--primary);
+            color: white;
+            padding: 14px 10px;
+            text-align: center;
+            font-weight: 600;
+            font-size: 0.9em;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+
+        .schedule-table td {
+            padding: 10px 8px;
+            border: 1px solid var(--border);
+            text-align: center;
+            font-size: 0.85em;
+            position: relative;
+        }
+
+        .schedule-table tr:hover {
+            background: #f8f9fa;
+        }
+
+        .date-cell {
+            font-weight: 700;
+            background: #f8f9fa;
+            color: var(--primary);
+            min-width: 80px;
+            text-align: right;
+            padding-right: 12px;
+        }
+
+        .shift-cell {
+            min-width: 100px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .shift-cell:hover {
+            background: rgba(30, 58, 95, 0.05);
+        }
+
+        .shift-cell.assigned {
+            background: linear-gradient(135deg, #27ae60 0%, #2ecc71 100%);
+            color: white;
+            font-weight: 600;
+        }
+
+        .shift-cell.conflict {
+            background: linear-gradient(135deg, #e74c3c 0%, #ec7063 100%);
+            color: white;
+        }
+
+        .shift-cell select {
+            width: 100%;
+            padding: 6px;
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            font-size: 0.85em;
+        }
+
+        .column-header {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .column-number {
+            font-size: 1.1em;
+            font-weight: 700;
+        }
+
+        .column-name {
+            font-size: 0.75em;
+            opacity: 0.9;
+        }
+
+        .alert {
+            padding: 15px 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-weight: 500;
+        }
+
+        .alert-info {
+            background: #d1ecf1;
+            color: #0c5460;
+            border: 2px solid #bee5eb;
+        }
+
+        .alert-success {
+            background: #d4edda;
+            color: #155724;
+            border: 2px solid #c3e6cb;
+        }
+
+        .alert-warning {
+            background: #fff3cd;
+            color: #856404;
+            border: 2px solid #ffeaa7;
+        }
+
+        .alert-danger {
+            background: #f8d7da;
+            color: #721c24;
+            border: 2px solid #f5c6cb;
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 18px;
+            margin-top: 20px;
+        }
+
+        .stat-card {
+            background: white;
+            border-radius: 10px;
+            padding: 22px;
+            text-align: center;
+            border: 2px solid var(--border);
+            transition: all 0.3s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.12);
+            border-color: var(--primary);
+        }
+
+        .stat-number {
+            font-size: 2.5em;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 6px;
+        }
+
+        .stat-label {
+            color: #6c757d;
+            font-weight: 500;
+            font-size: 0.95em;
+        }
+
+        .month-selector {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 25px;
+            justify-content: center;
+        }
+
+        .month-selector button {
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 42px;
+            height: 42px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.3em;
+            transition: all 0.3s ease;
+            font-weight: 700;
+        }
+
+        .month-selector button:hover {
+            background: var(--primary-light);
+            transform: scale(1.15);
+        }
+
+        .month-selector span {
+            font-size: 1.4em;
+            font-weight: 700;
+            min-width: 220px;
+            text-align: center;
+            color: var(--primary);
+        }
+
+        .rules-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 18px;
+            margin-top: 20px;
+        }
+
+        .rule-card {
+            background: white;
+            border: 2px solid var(--border);
+            border-radius: 10px;
+            padding: 18px;
+            transition: all 0.3s ease;
+        }
+
+        .rule-card:hover {
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+            border-color: var(--primary);
+        }
+
+        .rule-title {
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 12px;
+            font-size: 1.05em;
+        }
+
+        .rule-description {
+            color: #6c757d;
+            font-size: 0.9em;
+            line-height: 1.5;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 40px;
+            font-size: 1.2em;
+            color: var(--primary);
+        }
+
+        .loading::after {
+            content: '...';
+            animation: loading 1.5s infinite;
+        }
+
+        @keyframes loading {
+            0%, 20% { content: '.'; }
+            40% { content: '..'; }
+            60%, 100% { content: '...'; }
+        }
+
+        .validation-errors {
+            background: #f8d7da;
+            border: 2px solid #f5c6cb;
+            border-radius: 8px;
+            padding: 15px 20px;
+            margin-top: 20px;
+        }
+
+        .validation-error {
+            color: #721c24;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .validation-error::before {
+            content: '⚠️';
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 1.8em;
+            }
+
+            .tabs {
+                flex-direction: column;
+            }
+
+            .tab-content {
+                padding: 20px;
+            }
+
+            .schedule-table {
+                font-size: 0.75em;
+            }
+
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .table-container {
+            overflow-x: auto;
+            margin-top: 20px;
+        }
+
+        .export-buttons {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+
+        .pref-calendar {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 12px;
+            margin-top: 25px;
+            max-width: 900px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .pref-calendar-header {
+            text-align: center;
+            font-weight: 700;
+            padding: 12px;
+            background: var(--primary);
+            color: white;
+            border-radius: 8px;
+            font-size: 0.95em;
+        }
+
+        .pref-day {
+            aspect-ratio: 1;
+            border: 2px solid #dee2e6;
+            border-radius: 10px;
+            padding: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background: white;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .pref-day:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+
+        .pref-day.preferred {
+            background: linear-gradient(135deg, #27ae60 0%, #2ecc71 100%);
+            color: white;
+            border-color: #27ae60;
+            font-weight: 600;
+        }
+
+        .pref-day.blocked {
+            background: linear-gradient(135deg, #e74c3c 0%, #ec7063 100%);
+            color: white;
+            border-color: #e74c3c;
+            font-weight: 600;
+        }
+
+        .pref-day.disabled {
+            opacity: 0.3;
+            cursor: not-allowed;
+            background: #f8f9fa;
+        }
+
+        .pref-day-number {
+            font-size: 1.4em;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+
+        .pref-day-icon {
+            font-size: 1.2em;
+        }
+
+        .pref-day.today {
+            box-shadow: 0 0 0 3px rgba(30, 58, 95, 0.3);
+        }
+
+        @media (max-width: 768px) {
+            .pref-calendar {
+                gap: 6px;
+            }
+
+            .pref-day {
+                padding: 6px;
+            }
+
+            .pref-day-number {
+                font-size: 1.1em;
+            }
+
+            .pref-day-icon {
+                font-size: 0.9em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🏥 מערכת שיבוץ תורנויות מתקדמת</h1>
+            <p>מחלקת נשים - 4 עמודות תורנות ביום | ניהול חכם עם אילוצים מורכבים</p>
+        </div>
+
+        <div class="tabs">
+            <button class="tab active" onclick="switchTab('setup')">⚙️ הגדרות ראשוניות</button>
+            <button class="tab" onclick="switchTab('doctors')">👨‍⚕️ רופאים</button>
+            <button class="tab" onclick="switchTab('rules')">📋 כללים</button>
+            <button class="tab" onclick="switchTab('preferences')">⭐ העדפות</button>
+            <button class="tab" onclick="switchTab('schedule')">📅 שיבוץ</button>
+        </div>
+
+        <!-- Setup Tab -->
+        <div id="setup-tab" class="tab-content active">
+            <div class="alert alert-success">
+                <strong>🚀 מדריך התחלה מהירה:</strong><br>
+                <strong>1.</strong> הגדר את 4 העמודות (למטה) ותן להן שמות<br>
+                <strong>2.</strong> עבור ל"רופאים" והוסף את כל הרופאים + בחר לכל אחד באילו עמודות הוא יכול לעבוד<br>
+                <strong>3.</strong> עבור ל"כללים" והגדר את מגבלות התורנויות<br>
+                <strong>4.</strong> עבור ל"העדפות" וכל רופא יסמן את הימים שהוא רוצה/לא רוצה<br>
+                <strong>5.</strong> עבור ל"שיבוץ" ולחץ על הכפתור לשיבוץ אוטומטי! 🎉
+            </div>
+            
+            <div class="section">
+                <h2>הגדרת עמודות התורנויות</h2>
+                <div class="alert alert-info">
+                    בחר את מספר העמודות ליום (ברירת מחדל: 4) והגדר שם לכל עמודה
+                </div>
+                
+                <div class="form-group">
+                    <label>מספר עמודות ביום:</label>
+                    <input type="number" id="numColumns" value="4" min="1" max="12" onchange="updateColumnSetup()">
+                </div>
+
+                <div id="columnsSetup" class="form-group">
+                    <!-- Will be populated dynamically -->
+                </div>
+
+                <button class="btn btn-primary" onclick="saveColumnSetup()">💾 שמור הגדרות עמודות</button>
+            </div>
+
+            <div class="section">
+                <h2>הגדרות כלליות</h2>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>שנה:</label>
+                        <input type="number" id="setupYear" value="2026" min="2024" max="2030">
+                    </div>
+                    <div class="form-group">
+                        <label>חודש:</label>
+                        <select id="setupMonth">
+                            <option value="0">ינואר</option>
+                            <option value="1">פברואר</option>
+                            <option value="2">מרץ</option>
+                            <option value="3">אפריל</option>
+                            <option value="4">מאי</option>
+                            <option value="5">יוני</option>
+                            <option value="6">יולי</option>
+                            <option value="7">אוגוסט</option>
+                            <option value="8">ספטמבר</option>
+                            <option value="9">אוקטובר</option>
+                            <option value="10">נובמבר</option>
+                            <option value="11">דצמבר</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Doctors Tab -->
+        <div id="doctors-tab" class="tab-content">
+            <div class="section">
+                <h2>הוספת רופא חדש</h2>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>שם הרופא/ה:</label>
+                        <input type="text" id="doctorName" placeholder="הזן שם מלא">
+                    </div>
+                </div>
+
+                <div class="alert alert-info" style="margin-bottom: 20px;">
+                    <strong>💡 מגבלות תורנויות (כל השדות אופציונליים):</strong><br>
+                    אם לא מוגדר - ישתמש במגבלה הכללית מהכללים
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>מקסימום תורנויות סה"כ בחודש:</label>
+                        <input type="number" id="individualMaxShifts" placeholder="לדוגמה: 8" min="0">
+                    </div>
+                    <div class="form-group">
+                        <label>מקסימום תורנויות בימי חול (א'-ה'):</label>
+                        <input type="number" id="maxWeekdayShifts" placeholder="לדוגמה: 5" min="0">
+                    </div>
+                    <div class="form-group">
+                        <label>מקסימום תורנויות בסופ"ש (ו'-ש'):</label>
+                        <input type="number" id="maxWeekendShifts" placeholder="לדוגמה: 3" min="0">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>עמודות שהרופא/ה יכול/ה לעבוד בהן:</label>
+                    <div id="doctorColumnsCheckboxes" class="checkbox-group">
+                        <!-- Will be populated dynamically -->
+                    </div>
+                </div>
+
+                <button class="btn btn-primary" onclick="addDoctor()">➕ הוסף רופא למערכת</button>
+            </div>
+
+            <div class="section">
+                <h2>רשימת רופאים (<span id="doctorCount">0</span>)</h2>
+                <div id="doctorsWarning" style="display: none;" class="alert alert-danger">
+                    ⚠️ <strong>שים לב!</strong> יש רופאים ללא עמודות מורשות. רופאים אלו לא ישובצו בשיבוץ האוטומטי.
+                    <button class="btn btn-warning btn-small" onclick="showFixDoctorsHelp()" style="margin-right: 10px;">איך לתקן?</button>
+                </div>
+                <div id="doctorsList" class="doctors-grid">
+                    <div class="alert alert-info">
+                        טרם נוספו רופאים. הוסף רופאים כדי להתחיל.
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Rules Tab -->
+        <div id="rules-tab" class="tab-content">
+            <div class="section">
+                <h2>כללי שיבוץ בסיסיים</h2>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>מינימום תורנויות לרופא בחודש:</label>
+                        <input type="number" id="minShiftsPerMonth" value="4" min="0">
+                    </div>
+                    <div class="form-group">
+                        <label>מקסימום תורנויות לרופא בחודש:</label>
+                        <input type="number" id="maxShiftsPerMonth" value="12" min="0">
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>מינימום תורנויות ביום לרופא:</label>
+                        <input type="number" id="minShiftsPerDay" value="1" min="1">
+                    </div>
+                    <div class="form-group">
+                        <label>מקסימום תורנויות ביום לרופא:</label>
+                        <input type="number" id="maxShiftsPerDay" value="3" min="1">
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>מינימום ימי מנוחה בין תורנויות:</label>
+                        <input type="number" id="minRestDays" value="1" min="0">
+                    </div>
+                    <div class="form-group">
+                        <label>מקסימום ימים רצופים עם תורנויות:</label>
+                        <input type="number" id="maxConsecutiveDays" value="3" min="1">
+                    </div>
+                </div>
+
+                <button class="btn btn-primary" onclick="saveRules()">💾 שמור כללים</button>
+            </div>
+
+            <div class="section">
+                <h2>כללי קישור בין עמודות</h2>
+                <div class="alert alert-info">
+                    <strong>כלל אוטומטי:</strong> כאשר רופא משובץ בעמודה מקור ביום מסוים בשבוע, הוא יקבל אוטומטית תורנות בעמודה יעד באותו יום בשבוע בשבועות אחרים באותו חודש.
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>עמודה מקור:</label>
+                        <select id="linkSourceColumn">
+                            <option value="">-- בחר עמודה --</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>עמודה יעד (לשבועות אחרים):</label>
+                        <select id="linkTargetColumn">
+                            <option value="">-- בחר עמודה --</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <button class="btn btn-secondary" onclick="addColumnLink()">🔗 הוסף קישור בין עמודות</button>
+                
+                <div id="columnLinksList" style="margin-top: 20px;">
+                    <!-- Links will be displayed here -->
+                </div>
+            </div>
+
+            <div class="section">
+                <h2>כללים נוספים במערכת</h2>
+                <div class="rules-grid">
+                    <div class="rule-card">
+                        <div class="rule-title">✅ התאמה לעמודות</div>
+                        <div class="rule-description">רופא יכול להיות משובץ רק בעמודות שהוגדרו עבורו</div>
+                    </div>
+                    <div class="rule-card">
+                        <div class="rule-title">1️⃣ עמודה אחת ביום</div>
+                        <div class="rule-description">רופא יכול להיות משובץ רק בעמודה אחת באותו יום</div>
+                    </div>
+                    <div class="rule-card">
+                        <div class="rule-title">🔗 קישור בין עמודות</div>
+                        <div class="rule-description">רופא משובץ בעמודה מקור ביום בשבוע, יקבל אוטומטית עמודה יעד באותו יום בשבועות אחרים</div>
+                    </div>
+                    <div class="rule-card">
+                        <div class="rule-title">⭐ העדפות רופאים</div>
+                        <div class="rule-description">העדפה לימים שהרופא סימן כרצויים</div>
+                    </div>
+                    <div class="rule-card">
+                        <div class="rule-title">❌ הימנעות מימים חסומים</div>
+                        <div class="rule-description">הימנעות מימים שהרופא סימן כלא זמינים</div>
+                    </div>
+                    <div class="rule-card">
+                        <div class="rule-title">⚖️ חלוקה שווה</div>
+                        <div class="rule-description">איזון מספר התורנויות בין כל הרופאים</div>
+                    </div>
+                    <div class="rule-card">
+                        <div class="rule-title">🔄 מניעת עומס</div>
+                        <div class="rule-description">שמירה על מגבלות תורנויות רצופות</div>
+                    </div>
+                    <div class="rule-card">
+                        <div class="rule-title">📊 אופטימיזציה</div>
+                        <div class="rule-description">שיבוץ חכם שממקסם שביעות רצון</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Preferences Tab -->
+        <div id="preferences-tab" class="tab-content">
+            <div class="alert alert-info">
+                <strong>💡 איך להשתמש:</strong><br>
+                1️⃣ קודם הוסף רופאים בלשונית "רופאים"<br>
+                2️⃣ בחר רופא מהרשימה למטה<br>
+                3️⃣ סמן את ההעדפות שלו לחודש הרצוי
+            </div>
+            
+            <div class="section">
+                <h2>בחירת רופא</h2>
+                <div class="form-group">
+                    <label>בחר רופא לסימון העדפות:</label>
+                    <select id="prefDoctorSelect" onchange="loadPreferences()">
+                        <option value="">-- בחר רופא --</option>
+                    </select>
+                </div>
+                <div id="noDoctorsWarning" class="alert alert-warning" style="display: none;">
+                    ⚠️ טרם נוספו רופאים למערכת. עבור ללשונית "רופאים" והוסף רופאים תחילה.
+                </div>
+            </div>
+
+            <div id="preferencesContent" style="display: none;">
+                <div class="section">
+                    <h2>סימון העדפות בלוח שנה</h2>
+                    <div class="alert alert-info">
+                        <strong>💡 לחץ על ימים בלוח השנה כדי לסמן:</strong><br>
+                        🟢 <strong>לחיצה ראשונה:</strong> מעוניין לבצע תורנות ביום זה<br>
+                        🔴 <strong>לחיצה שנייה:</strong> לא מעוניין לבצע תורנות ביום זה (חסימה)<br>
+                        ⚪ <strong>לחיצה שלישית:</strong> ניקוי - אין העדפה מיוחדת
+                    </div>
+
+                    <div class="month-selector">
+                        <button onclick="changePrefMonth(-1)">◀</button>
+                        <span id="prefMonthDisplay"></span>
+                        <button onclick="changePrefMonth(1)">▶</button>
+                    </div>
+
+                    <div id="prefCalendar" class="pref-calendar">
+                        <!-- Calendar will be generated here -->
+                    </div>
+
+                    <div style="margin-top: 20px; display: flex; gap: 20px; justify-content: center; align-items: center; flex-wrap: wrap;">
+                        <div style="display: flex; align-items: center; gap: 8px;">
+                            <div style="width: 30px; height: 30px; background: linear-gradient(135deg, #27ae60 0%, #2ecc71 100%); border-radius: 6px;"></div>
+                            <span>מעוניין בתורנות</span>
+                        </div>
+                        <div style="display: flex; align-items: center; gap: 8px;">
+                            <div style="width: 30px; height: 30px; background: linear-gradient(135deg, #e74c3c 0%, #ec7063 100%); border-radius: 6px;"></div>
+                            <span>לא מעוניין / חסום</span>
+                        </div>
+                        <div style="display: flex; align-items: center; gap: 8px;">
+                            <div style="width: 30px; height: 30px; background: white; border: 2px solid #dee2e6; border-radius: 6px;"></div>
+                            <span>אין העדפה</span>
+                        </div>
+                    </div>
+
+                    <div style="margin-top: 20px; text-align: center;">
+                        <button class="btn btn-success" onclick="savePreferences()">💾 שמור העדפות</button>
+                    </div>
+                </div>
+
+                <div class="section">
+                    <h2>סימון מהיר לטווח תאריכים</h2>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>מתאריך:</label>
+                            <input type="date" id="prefFromDate">
+                        </div>
+                        <div class="form-group">
+                            <label>עד תאריך:</label>
+                            <input type="date" id="prefToDate">
+                        </div>
+                        <div class="form-group">
+                            <label>סוג העדפה:</label>
+                            <select id="prefType">
+                                <option value="preferred">מעוניין בתורנות 🟢</option>
+                                <option value="blocked">לא מעוניין / חסום 🔴</option>
+                                <option value="clear">נקה העדפה ⚪</option>
+                            </select>
+                        </div>
+                    </div>
+                    <button class="btn btn-secondary" onclick="applyBulkPreference()">📅 החל על טווח תאריכים</button>
+                </div>
+
+                <div class="section">
+                    <h2>סיכום העדפות</h2>
+                    <div id="preferencesSummary" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px;">
+                        <!-- Summary will be displayed here -->
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Schedule Tab -->
+        <div id="schedule-tab" class="tab-content">
+            <div class="section">
+                <h2>יצירת שיבוץ אוטומטי</h2>
+                
+                <div id="adminStatus" class="alert alert-warning" style="display: none;">
+                    ✅ מחובר כמנהל
+                </div>
+                
+                <div class="alert alert-warning">
+                    <strong>לתשומת לב:</strong> השיבוץ האוטומטי יתחשב בכל הכללים וההעדפות שהוגדרו. התהליך עשוי לקחת מספר שניות.
+                </div>
+
+                <div style="text-align: center; margin-top: 25px;">
+                    <button class="btn btn-success" onclick="generateSchedule()" style="font-size: 1.3em; padding: 18px 50px;">
+                        🚀 צור שיבוץ אוטומטי
+                    </button>
+                </div>
+            </div>
+
+            <div id="scheduleLoading" class="loading" style="display: none;">
+                <div style="font-size: 1.5em; margin-bottom: 15px;">⏳ מבצע שיבוץ אוטומטי</div>
+                <div style="font-size: 1em; color: #6c757d;">זה עשוי לקחת מספר שניות, אנא המתן...</div>
+                <div style="margin-top: 20px; font-size: 0.9em; color: #6c757d;">
+                    <div>✓ מאזן עומסים בין רופאים</div>
+                    <div>✓ בודק העדפות</div>
+                    <div>✓ מוודא שמירה על כללים</div>
+                </div>
+            </div>
+
+            <div id="scheduleResult" style="display: none;">
+                <div class="section">
+                    <h2>סטטיסטיקות</h2>
+                    <div id="scheduleStats" class="stats"></div>
+                </div>
+
+                <div id="debugInfo" class="section" style="display: none;">
+                    <h2>מידע דיבאג</h2>
+                    <div id="debugContent" style="background: #f8f9fa; padding: 15px; border-radius: 8px; font-family: monospace; font-size: 0.9em; white-space: pre-wrap;">
+                    </div>
+                    <button class="btn btn-secondary btn-small" onclick="document.getElementById('debugInfo').style.display='none'" style="margin-top: 10px;">סגור</button>
+                </div>
+
+                <div class="section">
+                    <h2>סיכום תורנויות לפי רופא</h2>
+                    <table class="schedule-table" id="scheduleTable">
+                        <!-- Summary table will be populated -->
+                    </table>
+                </div>
+
+                <div class="section">
+                    <h2>לוח תורנויות מפורט</h2>
+                    <div class="table-container">
+                        <table class="schedule-table" id="scheduleCalendarTable">
+                            <!-- Calendar table will be populated -->
+                        </table>
+                    </div>
+                </div>
+
+                <div id="validationErrors"></div>
+
+                <div class="export-buttons">
+                    <button class="btn btn-secondary" onclick="exportToCSV()">📥 ייצא ל-CSV</button>
+                    <button class="btn btn-primary" onclick="exportToText()">📄 ייצא לטקסט</button>
+                    <button class="btn btn-success" onclick="saveSchedule()">💾 שמור שיבוץ</button>
+                    <button class="btn btn-secondary" onclick="showDebugInfo()">🔍 הצג מידע דיבאג</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Global data structures
+        let columns = [];
+        let doctors = [];
+        let preferences = {}; // {doctorId: {date: 'preferred' | 'blocked'}}
+        let rules = {
+            minShiftsPerMonth: 4,
+            maxShiftsPerMonth: 12,
+            minShiftsPerDay: 1,
+            maxShiftsPerDay: 3,
+            minRestDays: 1,
+            maxConsecutiveDays: 3
+        };
+        let schedule = {}; // {date: {columnId: doctorId}}
+        let currentYear = 2026;
+        let currentMonth = 0;
+        let columnLinks = []; // Links between columns for automatic assignment
+        let prefCalendarYear = 2026;
+        let prefCalendarMonth = 0;
+
+        // Initialize
+        window.onload = function() {
+            loadData();
+            
+            // Pre-load data if empty (first time use)
+            if (doctors.length === 0 && columns.length === 0) {
+                initializeDefaultData();
+            }
+            
+            updateColumnSetup();
+            updateDoctorColumnsCheckboxes();
+            updateDoctorSelect();
+            updateDoctorsList(); // Add this to show doctors after loading
+            
+            // Set current date
+            const now = new Date();
+            currentYear = now.getFullYear();
+            currentMonth = now.getMonth();
+            document.getElementById('setupYear').value = currentYear;
+            document.getElementById('setupMonth').value = currentMonth;
+        };
+
+        function initializeDefaultData() {
+            // Set up 4 columns
+            columns = [
+                {id: 0, name: 'תורן מיון 2'},
+                {id: 1, name: 'תורן מיון 3'},
+                {id: 2, name: 'תורן מיון 4'},
+                {id: 3, name: 'תורן מחלקה 5'}
+            ];
+
+            // Set up 21 doctors with their allowed columns
+            const doctorData = [
+                {name: 'מור', allowedColumns: [0, 1]},
+                {name: 'וילק', allowedColumns: [0, 1]},
+                {name: 'חמרני', allowedColumns: [0, 1]},
+                {name: 'מרקס', allowedColumns: [0, 1]},
+                {name: 'מושקוביץ', allowedColumns: [0, 1]},
+                {name: 'מילון', allowedColumns: [0, 1]},
+                {name: 'אלישיב', allowedColumns: [0, 1]},
+                {name: 'פרנקל', allowedColumns: [0, 1]},
+                {name: 'ויקטור', allowedColumns: [0, 1]},
+                {name: 'ביבר', allowedColumns: [1]},
+                {name: 'נחשון', allowedColumns: [2, 3]},
+                {name: 'פארוג\'ה', allowedColumns: [2, 3]},
+                {name: 'לסרי', allowedColumns: [1]},
+                {name: 'הורביץ', allowedColumns: [2]},
+                {name: 'קס', allowedColumns: [2, 3]},
+                {name: 'פרנקל', allowedColumns: [2, 3]},
+                {name: 'נוי', allowedColumns: [2, 3]},
+                {name: 'אסולין', allowedColumns: [2, 3]},
+                {name: 'בר', allowedColumns: [3]},
+                {name: 'מוסטאפא', allowedColumns: [3]},
+                {name: 'יוגב', allowedColumns: [3]}
+            ];
+
+            doctors = doctorData.map((d, index) => ({
+                id: Date.now() + index,
+                name: d.name,
+                allowedColumns: d.allowedColumns,
+                maxShifts: null,
+                maxWeekdayShifts: null,
+                maxWeekendShifts: null
+            }));
+
+            // Initialize preferences for all doctors
+            doctors.forEach(d => {
+                preferences[d.id] = {};
+            });
+
+            saveData();
+            console.log('✅ Initialized with 21 doctors and 4 columns');
+        }
+
+        function switchTab(tabName) {
+            document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+            
+            event.target.classList.add('active');
+            document.getElementById(tabName + '-tab').classList.add('active');
+        }
+
+        function updateColumnSetup() {
+            const numColumns = parseInt(document.getElementById('numColumns').value);
+            const container = document.getElementById('columnsSetup');
+            
+            let html = '<label>שמות העמודות:</label><div class="form-row">';
+            for (let i = 0; i < numColumns; i++) {
+                const columnName = columns[i] ? columns[i].name : `עמודה ${i + 1}`;
+                html += `
+                    <div class="form-group">
+                        <label>עמודה ${i + 1}:</label>
+                        <input type="text" id="column${i}" value="${columnName}" placeholder="שם העמודה">
+                    </div>
+                `;
+            }
+            html += '</div>';
+            container.innerHTML = html;
+        }
+
+        function saveColumnSetup() {
+            const numColumns = parseInt(document.getElementById('numColumns').value);
+            columns = [];
+            
+            for (let i = 0; i < numColumns; i++) {
+                const name = document.getElementById(`column${i}`).value || `עמודה ${i + 1}`;
+                columns.push({
+                    id: i,
+                    name: name
+                });
+            }
+
+            currentYear = parseInt(document.getElementById('setupYear').value);
+            currentMonth = parseInt(document.getElementById('setupMonth').value);
+
+            updateDoctorColumnsCheckboxes();
+            updateColumnLinkSelects();
+            saveData();
+            alert('✅ הגדרות העמודות נשמרו בהצלחה!');
+        }
+
+        function updateColumnLinkSelects() {
+            const sourceSelect = document.getElementById('linkSourceColumn');
+            const targetSelect = document.getElementById('linkTargetColumn');
+            
+            if (!sourceSelect || !targetSelect) return;
+            
+            const options = '<option value="">-- בחר עמודה --</option>' +
+                columns.map(col => `<option value="${col.id}">${col.name}</option>`).join('');
+            
+            sourceSelect.innerHTML = options;
+            targetSelect.innerHTML = options;
+        }
+
+        function addColumnLink() {
+            const sourceId = parseInt(document.getElementById('linkSourceColumn').value);
+            const targetId = parseInt(document.getElementById('linkTargetColumn').value);
+            
+            if (isNaN(sourceId) || isNaN(targetId)) {
+                alert('אנא בחר שתי עמודות');
+                return;
+            }
+            
+            if (sourceId === targetId) {
+                alert('לא ניתן לקשר עמודה לעצמה');
+                return;
+            }
+            
+            // Check if link already exists
+            const exists = columnLinks.some(link => 
+                link.sourceId === sourceId && link.targetId === targetId
+            );
+            
+            if (exists) {
+                alert('קישור זה כבר קיים');
+                return;
+            }
+            
+            columnLinks.push({
+                sourceId: sourceId,
+                targetId: targetId
+            });
+            
+            displayColumnLinks();
+            saveData();
+            alert('✅ קישור נוסף בהצלחה!');
+        }
+
+        function displayColumnLinks() {
+            const container = document.getElementById('columnLinksList');
+            if (!container) return;
+            
+            if (columnLinks.length === 0) {
+                container.innerHTML = '<div class="alert alert-info">טרם הוגדרו קישורים בין עמודות</div>';
+                return;
+            }
+            
+            const html = columnLinks.map((link, index) => {
+                const sourceCol = columns.find(c => c.id === link.sourceId);
+                const targetCol = columns.find(c => c.id === link.targetId);
+                
+                return `
+                    <div class="rule-item">
+                        <span>
+                            <strong>🔗 ${sourceCol?.name || 'עמודה ' + (link.sourceId + 1)}</strong>
+                            →
+                            <strong>${targetCol?.name || 'עמודה ' + (link.targetId + 1)}</strong>
+                            <br>
+                            <small style="color: #6c757d;">רופא בעמודה מקור ביום X בשבוע, יקבל אוטומטית את עמודה היעד באותו יום בשבוע בשבועות אחרים</small>
+                        </span>
+                        <button class="btn btn-danger btn-small" onclick="removeColumnLink(${index})">🗑️</button>
+                    </div>
+                `;
+            }).join('');
+            
+            container.innerHTML = html;
+        }
+
+        function removeColumnLink(index) {
+            if (confirm('האם אתה בטוח שברצונך למחוק קישור זה?')) {
+                columnLinks.splice(index, 1);
+                displayColumnLinks();
+                saveData();
+            }
+        }
+
+        function updateDoctorColumnsCheckboxes() {
+            const container = document.getElementById('doctorColumnsCheckboxes');
+            if (columns.length === 0) {
+                container.innerHTML = '<div class="alert alert-warning">אנא הגדר תחילה את עמודות התורנויות בלשונית "הגדרות ראשוניות"</div>';
+                return;
+            }
+
+            let html = '';
+            columns.forEach(col => {
+                html += `
+                    <label class="checkbox-item">
+                        <input type="checkbox" value="${col.id}" id="docCol${col.id}">
+                        <span>${col.name}</span>
+                    </label>
+                `;
+            });
+            container.innerHTML = html;
+        }
+
+        function addDoctor() {
+            const name = document.getElementById('doctorName').value.trim();
+            if (!name) {
+                alert('אנא הזן שם רופא');
+                return;
+            }
+
+            if (columns.length === 0) {
+                alert('אנא הגדר תחילה את עמודות התורנויות');
+                return;
+            }
+
+            const allowedColumns = [];
+            columns.forEach(col => {
+                const checkbox = document.getElementById(`docCol${col.id}`);
+                if (checkbox && checkbox.checked) {
+                    allowedColumns.push(col.id);
+                }
+            });
+
+            if (allowedColumns.length === 0) {
+                alert('אנא בחר לפחות עמודה אחת שהרופא יכול לעבוד בה');
+                return;
+            }
+
+            // Get individual limits (optional)
+            const individualMaxShifts = parseInt(document.getElementById('individualMaxShifts').value) || null;
+            const maxWeekdayShifts = parseInt(document.getElementById('maxWeekdayShifts').value) || null;
+            const maxWeekendShifts = parseInt(document.getElementById('maxWeekendShifts').value) || null;
+
+            const doctor = {
+                id: Date.now(),
+                name: name,
+                allowedColumns: allowedColumns,
+                maxShifts: individualMaxShifts, // Total limit
+                maxWeekdayShifts: maxWeekdayShifts, // Weekday limit (Sun-Thu)
+                maxWeekendShifts: maxWeekendShifts  // Weekend limit (Fri-Sat)
+            };
+
+            doctors.push(doctor);
+            preferences[doctor.id] = {};
+            
+            document.getElementById('doctorName').value = '';
+            document.getElementById('individualMaxShifts').value = '';
+            document.getElementById('maxWeekdayShifts').value = '';
+            document.getElementById('maxWeekendShifts').value = '';
+            columns.forEach(col => {
+                const checkbox = document.getElementById(`docCol${col.id}`);
+                if (checkbox) checkbox.checked = false;
+            });
+
+            updateDoctorsList();
+            updateDoctorSelect();
+            saveData();
+        }
+
+        function removeDoctor(doctorId) {
+            if (!confirm('האם אתה בטוח שברצונך למחוק את הרופא?')) return;
+            
+            doctors = doctors.filter(d => d.id !== doctorId);
+            delete preferences[doctorId];
+            updateDoctorsList();
+            updateDoctorSelect();
+            saveData();
+        }
+
+        function updateDoctorsList() {
+            const list = document.getElementById('doctorsList');
+            document.getElementById('doctorCount').textContent = doctors.length;
+
+            if (doctors.length === 0) {
+                list.innerHTML = '<div class="alert alert-info">טרם נוספו רופאים. הוסף רופאים כדי להתחיל.</div>';
+                document.getElementById('doctorsWarning').style.display = 'none';
+                return;
+            }
+
+            // Check if any doctors have no columns
+            const doctorsWithoutColumns = doctors.filter(d => !d.allowedColumns || d.allowedColumns.length === 0);
+            const warningDiv = document.getElementById('doctorsWarning');
+            if (doctorsWithoutColumns.length > 0) {
+                warningDiv.style.display = 'block';
+            } else {
+                warningDiv.style.display = 'none';
+            }
+
+            list.innerHTML = doctors.map(doctor => {
+                const allowedCols = doctor.allowedColumns || [];
+                const columnNames = allowedCols
+                    .map(colId => columns.find(c => c.id === colId)?.name || `עמודה ${colId + 1}`)
+                    .join(', ');
+                
+                const hasNoColumns = allowedCols.length === 0;
+                
+                // Build limits text
+                let limitsText = '';
+                if (doctor.maxShifts) limitsText += `סה"כ: ${doctor.maxShifts}`;
+                if (doctor.maxWeekdayShifts) limitsText += (limitsText ? ' | ' : '') + `חול: ${doctor.maxWeekdayShifts}`;
+                if (doctor.maxWeekendShifts) limitsText += (limitsText ? ' | ' : '') + `סופ"ש: ${doctor.maxWeekendShifts}`;
+                if (!limitsText) limitsText = 'לפי מגבלה כללית';
+                
+                return `
+                    <div class="doctor-card" style="${hasNoColumns ? 'border-color: var(--danger); border-width: 3px;' : ''}">
+                        <div class="doctor-header">
+                            <span class="doctor-name">👨‍⚕️ ${doctor.name}</span>
+                            <div style="display: flex; gap: 5px;">
+                                <button class="btn btn-secondary btn-small" onclick="editDoctor(${doctor.id})" title="ערוך רופא">✏️</button>
+                                <button class="btn btn-danger btn-small" onclick="removeDoctor(${doctor.id})">🗑️</button>
+                            </div>
+                        </div>
+                        <div class="doctor-info">
+                            <strong>עמודות מורשות:</strong>
+                            ${hasNoColumns ? '<span style="color: var(--danger); font-weight: bold;">⚠️ לא הוגדרו עמודות!</span>' : ''}
+                        </div>
+                        ${allowedCols.length > 0 ? `
+                        <div class="columns-badge">
+                            ${allowedCols.map(colId => {
+                                const col = columns.find(c => c.id === colId);
+                                return `<span class="column-tag">${col?.name || `עמודה ${colId + 1}`}</span>`;
+                            }).join('')}
+                        </div>
+                        ` : '<div class="alert alert-warning" style="margin-top: 10px; font-size: 0.85em;">לחץ על "ערוך" ✏️ כדי להוסיף עמודות</div>'}
+                        <div class="doctor-info" style="margin-top: 10px;">
+                            <strong>מגבלות:</strong> <span style="color: var(--primary);">${limitsText}</span>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function showFixDoctorsHelp() {
+            alert(`איך לתקן רופאים ללא עמודות:
+
+1. לחץ על כפתור "ערוך" ✏️ ליד שם הרופא
+2. סמן את העמודות שהרופא יכול לעבוד בהן
+3. לחץ על "הוסף רופא למערכת" כדי לשמור
+
+חשוב: רופא ללא עמודות מורשות לא ישובץ בשיבוץ האוטומטי!`);
+        }
+
+        function editDoctor(doctorId) {
+            const doctor = doctors.find(d => d.id === doctorId);
+            if (!doctor) return;
+
+            // Fill the form with doctor's data
+            document.getElementById('doctorName').value = doctor.name;
+            document.getElementById('individualMaxShifts').value = doctor.maxShifts || '';
+            document.getElementById('maxWeekdayShifts').value = doctor.maxWeekdayShifts || '';
+            document.getElementById('maxWeekendShifts').value = doctor.maxWeekendShifts || '';
+            
+            // Check the appropriate checkboxes
+            columns.forEach(col => {
+                const checkbox = document.getElementById(`docCol${col.id}`);
+                if (checkbox) {
+                    checkbox.checked = doctor.allowedColumns && doctor.allowedColumns.includes(col.id);
+                }
+            });
+
+            // Remove the old doctor
+            doctors = doctors.filter(d => d.id !== doctorId);
+            updateDoctorsList();
+            updateDoctorSelect();
+
+            // Scroll to form
+            document.getElementById('doctorName').scrollIntoView({ behavior: 'smooth' });
+            
+            alert('ℹ️ ערכת את הרופא. כעת עדכן את הפרטים ולחץ "הוסף רופא למערכת" כדי לשמור.');
+        }
+
+        function updateDoctorSelect() {
+            const select = document.getElementById('prefDoctorSelect');
+            if (!select) return;
+            
+            const warning = document.getElementById('noDoctorsWarning');
+            
+            if (doctors.length === 0) {
+                select.innerHTML = '<option value="">-- בחר רופא --</option>';
+                if (warning) warning.style.display = 'block';
+            } else {
+                select.innerHTML = '<option value="">-- בחר רופא --</option>' +
+                    doctors.map(doctor => `<option value="${doctor.id}">${doctor.name}</option>`).join('');
+                if (warning) warning.style.display = 'none';
+            }
+        }
+
+        function loadPreferences() {
+            const doctorId = document.getElementById('prefDoctorSelect').value;
+            if (!doctorId) {
+                document.getElementById('preferencesContent').style.display = 'none';
+                return;
+            }
+
+            document.getElementById('preferencesContent').style.display = 'block';
+            
+            // Set calendar to current month
+            const now = new Date();
+            prefCalendarYear = currentYear || now.getFullYear();
+            prefCalendarMonth = currentMonth || now.getMonth();
+            
+            updatePrefMonthDisplay();
+            generatePrefCalendar();
+            displayPreferencesSummary(parseInt(doctorId));
+        }
+
+        function changePrefMonth(delta) {
+            prefCalendarMonth += delta;
+            if (prefCalendarMonth > 11) {
+                prefCalendarMonth = 0;
+                prefCalendarYear++;
+            } else if (prefCalendarMonth < 0) {
+                prefCalendarMonth = 11;
+                prefCalendarYear--;
+            }
+            updatePrefMonthDisplay();
+            generatePrefCalendar();
+        }
+
+        function updatePrefMonthDisplay() {
+            const months = ['ינואר', 'פברואר', 'מרץ', 'אפריל', 'מאי', 'יוני', 
+                          'יולי', 'אוגוסט', 'ספטמבר', 'אוקטובר', 'נובמבר', 'דצמבר'];
+            const display = document.getElementById('prefMonthDisplay');
+            if (display) {
+                display.textContent = `${months[prefCalendarMonth]} ${prefCalendarYear}`;
+            }
+        }
+
+        function generatePrefCalendar() {
+            const calendar = document.getElementById('prefCalendar');
+            if (!calendar) return;
+
+            const doctorId = parseInt(document.getElementById('prefDoctorSelect').value);
+            if (!doctorId) return;
+
+            const year = prefCalendarYear;
+            const month = prefCalendarMonth;
+            
+            const firstDay = new Date(year, month, 1);
+            const lastDay = new Date(year, month + 1, 0);
+            const daysInMonth = lastDay.getDate();
+            const startDay = firstDay.getDay();
+
+            const dayNames = ['ראשון', 'שני', 'שלישי', 'רביעי', 'חמישי', 'שישי', 'שבת'];
+            
+            let html = dayNames.map(day => 
+                `<div class="pref-calendar-header">${day}</div>`
+            ).join('');
+
+            // Add empty cells for days before month starts
+            for (let i = 0; i < startDay; i++) {
+                html += '<div class="pref-day disabled"></div>';
+            }
+
+            // Get today's date for highlighting
+            const today = new Date();
+            const todayStr = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
+
+            // Add days of month
+            for (let day = 1; day <= daysInMonth; day++) {
+                const date = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+                let className = 'pref-day';
+                let icon = '';
+                
+                // Check if this is today
+                if (date === todayStr) {
+                    className += ' today';
+                }
+                
+                // Check preference
+                if (preferences[doctorId] && preferences[doctorId][date]) {
+                    const pref = preferences[doctorId][date];
+                    if (pref === 'preferred') {
+                        className += ' preferred';
+                        icon = '✓';
+                    } else if (pref === 'blocked') {
+                        className += ' blocked';
+                        icon = '✗';
+                    }
+                }
+
+                html += `
+                    <div class="${className}" onclick="togglePrefDay('${date}')">
+                        <div class="pref-day-number">${day}</div>
+                        ${icon ? `<div class="pref-day-icon">${icon}</div>` : ''}
+                    </div>
+                `;
+            }
+
+            calendar.innerHTML = html;
+        }
+
+        function togglePrefDay(date) {
+            const doctorId = parseInt(document.getElementById('prefDoctorSelect').value);
+            if (!doctorId) return;
+
+            if (!preferences[doctorId]) {
+                preferences[doctorId] = {};
+            }
+
+            const current = preferences[doctorId][date];
+            if (!current) {
+                preferences[doctorId][date] = 'preferred';
+            } else if (current === 'preferred') {
+                preferences[doctorId][date] = 'blocked';
+            } else {
+                delete preferences[doctorId][date];
+            }
+
+            generatePrefCalendar();
+            displayPreferencesSummary(doctorId);
+        }
+
+        function displayPreferencesSummary(doctorId) {
+            const container = document.getElementById('preferencesSummary');
+            if (!container) return;
+
+            const prefs = preferences[doctorId] || {};
+            const preferred = Object.entries(prefs).filter(([_, type]) => type === 'preferred').length;
+            const blocked = Object.entries(prefs).filter(([_, type]) => type === 'blocked').length;
+
+            container.innerHTML = `
+                <div class="stat-card">
+                    <div class="stat-number" style="color: var(--success);">${preferred}</div>
+                    <div class="stat-label">ימים מועדפים</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" style="color: var(--danger);">${blocked}</div>
+                    <div class="stat-label">ימים חסומים</div>
+                </div>
+            `;
+        }
+
+        function displayPreferences(doctorId) {
+            // This function is now replaced by the calendar view
+            displayPreferencesSummary(doctorId);
+        }
+
+        function applyBulkPreference() {
+            const doctorId = parseInt(document.getElementById('prefDoctorSelect').value);
+            if (!doctorId) {
+                alert('אנא בחר רופא');
+                return;
+            }
+
+            const fromDate = document.getElementById('prefFromDate').value;
+            const toDate = document.getElementById('prefToDate').value;
+            const prefType = document.getElementById('prefType').value;
+
+            if (!fromDate || !toDate) {
+                alert('אנא בחר טווח תאריכים');
+                return;
+            }
+
+            const start = new Date(fromDate);
+            const end = new Date(toDate);
+
+            if (!preferences[doctorId]) {
+                preferences[doctorId] = {};
+            }
+
+            for (let d = new Date(start); d <= end; d.setDate(d.getDate() + 1)) {
+                const dateStr = d.toISOString().split('T')[0];
+                if (prefType === 'clear') {
+                    delete preferences[doctorId][dateStr];
+                } else {
+                    preferences[doctorId][dateStr] = prefType;
+                }
+            }
+
+            generatePrefCalendar();
+            displayPreferencesSummary(doctorId);
+            alert('✅ העדפות עודכנו בהצלחה!');
+        }
+
+        function savePreferences() {
+            saveData();
+            alert('✅ ההעדפות נשמרו בהצלחה!');
+        }
+
+        function saveRules() {
+            rules.minShiftsPerMonth = parseInt(document.getElementById('minShiftsPerMonth').value);
+            rules.maxShiftsPerMonth = parseInt(document.getElementById('maxShiftsPerMonth').value);
+            rules.minShiftsPerDay = parseInt(document.getElementById('minShiftsPerDay').value);
+            rules.maxShiftsPerDay = parseInt(document.getElementById('maxShiftsPerDay').value);
+            rules.minRestDays = parseInt(document.getElementById('minRestDays').value);
+            rules.maxConsecutiveDays = parseInt(document.getElementById('maxConsecutiveDays').value);
+            saveData();
+            alert('✅ הכללים נשמרו בהצלחה!');
+        }
+
+        // ========================================
+        // הגדרת סיסמת מנהל
+        // ========================================
+        // כדי לשנות את הסיסמה:
+        // 1. פתח את הקובץ בעורך טקסט (Notepad, VSCode, וכו')
+        // 2. חפש את השורה הזו (שורה מספר ~1447)
+        // 3. שנה את 'manager2026' לסיסמה שלך
+        // 4. שמור את הקובץ
+        // ========================================
+        const ADMIN_PASSWORD = 'manager2026'; // שנה את זה לסיסמה שלך!
+        let isAdminLoggedIn = false;
+
+        // Helper function to check if date is weekend (Friday or Saturday in Israel)
+        function isWeekend(dateString) {
+            const date = new Date(dateString);
+            const day = date.getDay();
+            return day === 5 || day === 6; // Friday = 5, Saturday = 6
+        }
+
+        // Helper function to check if date is Thursday, Friday, or Saturday (less desirable days)
+        function isLessDesirableDay(dateString) {
+            const date = new Date(dateString);
+            const day = date.getDay();
+            return day === 4 || day === 5 || day === 6; // Thursday = 4, Friday = 5, Saturday = 6
+        }
+
+        // Helper function to check if doctor can work based on weekday/weekend limits
+        function canDoctorWorkOnDate(doctor, date, currentWeekdayCount, currentWeekendCount) {
+            const isWeekendDay = isWeekend(date);
+            
+            if (isWeekendDay && doctor.maxWeekendShifts !== null && doctor.maxWeekendShifts !== undefined) {
+                return currentWeekendCount < doctor.maxWeekendShifts;
+            }
+            
+            if (!isWeekendDay && doctor.maxWeekdayShifts !== null && doctor.maxWeekdayShifts !== undefined) {
+                return currentWeekdayCount < doctor.maxWeekdayShifts;
+            }
+            
+            return true; // No specific limit for this day type
+        }
+
+        // Check if assigning this shift would create a 3-shift pattern (e.g., Thu-Sat-Mon)
+        function wouldCreate3ShiftPattern(doctorId, date, doctorDailyShifts, pattern3ShiftCount) {
+            const dateObj = new Date(date);
+            
+            // Check for pattern: day X, day X+2, day X+4
+            // Example: Thu (day 5), Sat (day 7), Mon (day 9)
+            const dayNum = dateObj.getDate();
+            
+            // Check if this is the third shift in a pattern
+            const date2DaysAgo = new Date(dateObj);
+            date2DaysAgo.setDate(dayNum - 2);
+            const date2DaysAgoStr = date2DaysAgo.toISOString().split('T')[0];
+            
+            const date4DaysAgo = new Date(dateObj);
+            date4DaysAgo.setDate(dayNum - 4);
+            const date4DaysAgoStr = date4DaysAgo.toISOString().split('T')[0];
+            
+            if (doctorDailyShifts[doctorId][date2DaysAgoStr] && doctorDailyShifts[doctorId][date4DaysAgoStr]) {
+                // This would be the 3rd shift in a pattern
+                const currentCount = pattern3ShiftCount[doctorId] || 0;
+                if (currentCount >= 2) {
+                    return true; // Already has 2 such patterns this month
+                }
+            }
+            
+            return false;
+        }
+
+        function generateSchedule() {
+            // Check if admin is logged in
+            if (!isAdminLoggedIn) {
+                const password = prompt('🔐 הזן סיסמת מנהל כדי לבצע שיבוץ:\n\n(טיפ: הסיסמה הראשונית היא "manager2026")');
+                if (password !== ADMIN_PASSWORD) {
+                    alert('❌ סיסמה שגויה! רק מנהל יכול לבצע שיבוץ אוטומטי.');
+                    return;
+                }
+                isAdminLoggedIn = true;
+                document.getElementById('adminStatus').style.display = 'block';
+            }
+
+            if (doctors.length === 0) {
+                alert('❌ אנא הוסף רופאים תחילה');
+                return;
+            }
+
+            if (columns.length === 0) {
+                alert('❌ אנא הגדר עמודות תורנויות תחילה בלשונית "הגדרות ראשוניות"');
+                return;
+            }
+
+            // Check if any doctor has allowed columns
+            const doctorsWithColumns = doctors.filter(d => d.allowedColumns && d.allowedColumns.length > 0);
+            if (doctorsWithColumns.length === 0) {
+                alert('❌ אף רופא לא הוגדר עם עמודות מורשות!\n\nעבור ללשונית "רופאים" וודא שכל רופא מוגדר עם לפחות עמודה אחת שהוא יכול לעבוד בה.');
+                return;
+            }
+
+            // Show info about the setup
+            console.log('Starting scheduling with:');
+            console.log('- Doctors:', doctors.length);
+            console.log('- Columns:', columns.length);
+            console.log('- Doctors with columns:', doctorsWithColumns.length);
+            console.log('- Year/Month:', currentYear, currentMonth);
+
+            document.getElementById('scheduleLoading').style.display = 'block';
+            document.getElementById('scheduleResult').style.display = 'none';
+
+            // Use a short timeout to allow UI to update
+            setTimeout(() => {
+                try {
+                    const startTime = Date.now();
+                    performScheduling();
+                    const duration = ((Date.now() - startTime) / 1000).toFixed(1);
+                    console.log(`Scheduling completed in ${duration} seconds`);
+                    document.getElementById('scheduleLoading').style.display = 'none';
+                    document.getElementById('scheduleResult').style.display = 'block';
+                } catch (error) {
+                    console.error('Scheduling error:', error);
+                    alert('❌ שגיאה בשיבוץ: ' + error.message);
+                    document.getElementById('scheduleLoading').style.display = 'none';
+                }
+            }, 100);
+        }
+
+        function performScheduling() {
+            const year = currentYear;
+            const month = currentMonth;
+            const daysInMonth = new Date(year, month + 1, 0).getDate();
+
+            console.log('Performing scheduling for:', year, month, 'Days:', daysInMonth);
+            console.log('Columns:', columns);
+            console.log('Doctors:', doctors);
+
+            schedule = {};
+            const doctorShifts = {};
+            const doctorWeekdayShifts = {}; // Track weekday shifts separately
+            const doctorWeekendShifts = {}; // Track weekend shifts separately
+            const doctorThurFriSatShifts = {}; // Track Thu/Fri/Sat shifts separately for balance
+            const doctorDailyShifts = {};
+            const doctorLastShiftDate = {};
+            const pattern3ShiftCount = {}; // Track how many 3-shift patterns each doctor has
+            const weeklyAssignments = {}; // Track assignments by day of week for column links
+
+            doctors.forEach(d => {
+                doctorShifts[d.id] = 0;
+                doctorWeekdayShifts[d.id] = 0;
+                doctorWeekendShifts[d.id] = 0;
+                doctorThurFriSatShifts[d.id] = 0;
+                doctorDailyShifts[d.id] = {};
+                doctorLastShiftDate[d.id] = null;
+                pattern3ShiftCount[d.id] = 0;
+                weeklyAssignments[d.id] = {}; // {dayOfWeek: {sourceColumnId: [dates]}}
+            });
+
+            let totalAssignments = 0;
+
+            // First pass - assign shifts normally
+            for (let day = 1; day <= daysInMonth; day++) {
+                const date = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+                const dateObj = new Date(date);
+                const dayOfWeek = dateObj.getDay(); // 0=Sunday, 1=Monday, etc.
+                
+                schedule[date] = {};
+
+                for (const column of columns) {
+                    let bestDoctor = null;
+                    let bestScore = -Infinity;
+                    let eligibleDoctors = 0;
+
+                    for (const doctor of doctors) {
+                        // Check if doctor can work in this column
+                        if (!doctor.allowedColumns || !doctor.allowedColumns.includes(column.id)) {
+                            continue;
+                        }
+
+                        eligibleDoctors++;
+
+                        // **CRITICAL: Check if doctor blocked this date**
+                        if (preferences[doctor.id] && preferences[doctor.id][date] === 'blocked') {
+                            continue; // Skip this doctor completely for blocked dates
+                        }
+
+                        // Check monthly limit (use individual limit if set, otherwise use global)
+                        const doctorMaxShifts = doctor.maxShifts !== null && doctor.maxShifts !== undefined 
+                            ? doctor.maxShifts 
+                            : rules.maxShiftsPerMonth;
+                        if (doctorShifts[doctor.id] >= doctorMaxShifts) continue;
+
+                        // **NEW: Check weekday/weekend specific limits**
+                        if (!canDoctorWorkOnDate(doctor, date, doctorWeekdayShifts[doctor.id], doctorWeekendShifts[doctor.id])) {
+                            continue;
+                        }
+
+                        // **CRITICAL: Check if doctor already assigned to ANY column today**
+                        // A doctor can only work in ONE column per day
+                        const dailyCount = doctorDailyShifts[doctor.id][date] || 0;
+                        if (dailyCount > 0) {
+                            continue; // Doctor already has a shift today, skip
+                        }
+                        
+                        // Check daily limit (backup check)
+                        if (dailyCount >= rules.maxShiftsPerDay) continue;
+
+                        // Check rest days
+                        if (doctorLastShiftDate[doctor.id]) {
+                            const lastDate = new Date(doctorLastShiftDate[doctor.id]);
+                            const currentDate = new Date(date);
+                            const daysDiff = Math.floor((currentDate - lastDate) / (1000 * 60 * 60 * 24));
+                            if (daysDiff < rules.minRestDays) continue;
+                        }
+
+                        // Check consecutive days
+                        let consecutiveDays = 0;
+                        for (let i = 1; i <= rules.maxConsecutiveDays; i++) {
+                            const checkDate = new Date(date);
+                            checkDate.setDate(checkDate.getDate() - i);
+                            const checkDateStr = checkDate.toISOString().split('T')[0];
+                            if (doctorDailyShifts[doctor.id][checkDateStr]) {
+                                consecutiveDays++;
+                            } else {
+                                break;
+                            }
+                        }
+                        if (consecutiveDays >= rules.maxConsecutiveDays) continue;
+
+                        // **NEW: Check 3-shift pattern (max 2 times per month)**
+                        if (wouldCreate3ShiftPattern(doctor.id, date, doctorDailyShifts, pattern3ShiftCount)) {
+                            continue; // Skip - would exceed 3-shift pattern limit
+                        }
+
+                        // Calculate score
+                        let score = 0;
+
+                        // **PRIORITY 1: Balance workload - TIGHTER CONSTRAINTS**
+                        // Maximum difference of 1 shift between any two doctors
+                        const currentShifts = doctorShifts[doctor.id];
+                        const minShifts = Math.min(...Object.values(doctorShifts));
+                        const maxShifts = Math.max(...Object.values(doctorShifts));
+                        
+                        // If assigning this would create a gap of 2+ shifts, heavily penalize
+                        if (currentShifts > minShifts) {
+                            score -= (currentShifts - minShifts) * 500; // Very heavy penalty
+                        }
+                        
+                        // Bonus for doctors with fewer shifts
+                        score += (maxShifts - currentShifts) * 200;
+                        
+                        // **PRIORITY 2: Balance Thursday/Friday/Saturday shifts**
+                        // These are less desirable, so distribute them evenly
+                        if (isLessDesirableDay(date)) {
+                            const avgThurFriSat = Object.values(doctorThurFriSatShifts).reduce((a, b) => a + b, 0) / doctors.length;
+                            const currentThurFriSat = doctorThurFriSatShifts[doctor.id];
+                            
+                            // Strong bonus for doctors with fewer Thu/Fri/Sat shifts
+                            if (currentThurFriSat < avgThurFriSat) {
+                                score += (avgThurFriSat - currentThurFriSat) * 150;
+                            } else {
+                                score -= (currentThurFriSat - avgThurFriSat) * 150;
+                            }
+                        }
+
+                        // **PRIORITY 3: Preferences - important but secondary to balance**
+                        if (preferences[doctor.id] && preferences[doctor.id][date] === 'preferred') {
+                            score += 30;
+                        }
+
+                        // **PRIORITY 4: Daily balance - slight preference**
+                        score -= dailyCount * 10;
+
+                        if (score > bestScore) {
+                            bestScore = score;
+                            bestDoctor = doctor;
+                        }
+                    }
+
+                    if (bestDoctor) {
+                        schedule[date][column.id] = bestDoctor.id;
+                        doctorShifts[bestDoctor.id]++;
+                        
+                        // Track weekday vs weekend
+                        if (isWeekend(date)) {
+                            doctorWeekendShifts[bestDoctor.id]++;
+                        } else {
+                            doctorWeekdayShifts[bestDoctor.id]++;
+                        }
+                        
+                        // Track Thursday/Friday/Saturday separately for balance
+                        if (isLessDesirableDay(date)) {
+                            doctorThurFriSatShifts[bestDoctor.id]++;
+                        }
+                        
+                        doctorDailyShifts[bestDoctor.id][date] = (doctorDailyShifts[bestDoctor.id][date] || 0) + 1;
+                        doctorLastShiftDate[bestDoctor.id] = date;
+                        totalAssignments++;
+                        
+                        // Check if this creates a new 3-shift pattern and track it
+                        const dateObj = new Date(date);
+                        const dayNum = dateObj.getDate();
+                        const date2DaysAgo = new Date(dateObj);
+                        date2DaysAgo.setDate(dayNum - 2);
+                        const date2DaysAgoStr = date2DaysAgo.toISOString().split('T')[0];
+                        const date4DaysAgo = new Date(dateObj);
+                        date4DaysAgo.setDate(dayNum - 4);
+                        const date4DaysAgoStr = date4DaysAgo.toISOString().split('T')[0];
+                        
+                        if (doctorDailyShifts[bestDoctor.id][date2DaysAgoStr] && 
+                            doctorDailyShifts[bestDoctor.id][date4DaysAgoStr]) {
+                            pattern3ShiftCount[bestDoctor.id]++;
+                        }
+                        
+                        // Track weekly assignments for column links
+                        if (!weeklyAssignments[bestDoctor.id][dayOfWeek]) {
+                            weeklyAssignments[bestDoctor.id][dayOfWeek] = {};
+                        }
+                        if (!weeklyAssignments[bestDoctor.id][dayOfWeek][column.id]) {
+                            weeklyAssignments[bestDoctor.id][dayOfWeek][column.id] = [];
+                        }
+                        weeklyAssignments[bestDoctor.id][dayOfWeek][column.id].push(date);
+                    } else if (eligibleDoctors === 0) {
+                        console.warn(`No eligible doctors for column ${column.name} on ${date}`);
+                    }
+                }
+            }
+
+            console.log('Total assignments made:', totalAssignments);
+            console.log('Schedule:', schedule);
+
+            // Check if any assignments were made
+            if (totalAssignments === 0) {
+                alert('⚠️ לא בוצעו שיבוצים!\n\nסיבות אפשריות:\n1. רופאים לא הוגדרו עם עמודות מורשות\n2. כל הרופאים חסמו את כל הימים בחודש\n3. הכללים מחמירים מדי\n\nנא לבדוק את ההגדרות ולנסות שוב.');
+            }
+
+            // Second pass - apply column links
+            applyColumnLinks(weeklyAssignments, doctorShifts, doctorDailyShifts, doctorWeekdayShifts, doctorWeekendShifts);
+
+            // **Third pass - Balance the schedule to make it more equal**
+            balanceSchedule(doctorShifts, doctorDailyShifts, doctorWeekdayShifts, doctorWeekendShifts);
+
+            displaySchedule(doctorShifts, doctorWeekdayShifts, doctorWeekendShifts);
+        }
+
+        function balanceSchedule(doctorShifts, doctorDailyShifts, doctorWeekdayShifts, doctorWeekendShifts) {
+            console.log('Starting balance phase...');
+            
+            // Calculate average shifts per doctor
+            const totalShifts = Object.values(doctorShifts).reduce((a, b) => a + b, 0);
+            const avgShifts = totalShifts / doctors.length;
+            
+            // **NEW: Enforce maximum difference of 1 shift**
+            const minShifts = Math.min(...Object.values(doctorShifts));
+            const maxShifts = Math.max(...Object.values(doctorShifts));
+            const maxAllowedDifference = 1;
+            
+            console.log(`Average shifts: ${avgShifts.toFixed(1)}, Min: ${minShifts}, Max: ${maxShifts}`);
+            
+            // If difference is already 1 or less, no need to balance
+            if (maxShifts - minShifts <= maxAllowedDifference) {
+                console.log('Schedule already balanced (max difference: 1 shift)');
+                return;
+            }
+            
+            // Get doctors who need more shifts (only those with minShifts)
+            const doctorsNeedingShifts = doctors
+                .filter(d => doctorShifts[d.id] === minShifts)
+                .sort((a, b) => doctorShifts[a.id] - doctorShifts[b.id]);
+            
+            if (doctorsNeedingShifts.length === 0) {
+                console.log('All doctors are balanced');
+                return;
+            }
+            
+            // Try to fill empty slots with doctors who have fewer shifts
+            const dates = Object.keys(schedule).sort();
+            let balanceAttempts = 0;
+            const maxBalanceAttempts = dates.length * columns.length; // Limit iterations
+            
+            for (const date of dates) {
+                if (balanceAttempts >= maxBalanceAttempts) {
+                    console.log('Max balance attempts reached, stopping');
+                    break;
+                }
+                
+                for (const column of columns) {
+                    balanceAttempts++;
+                    
+                    // If slot is empty
+                    if (!schedule[date][column.id]) {
+                        // Try to assign a doctor who needs more shifts
+                        for (const doctor of doctorsNeedingShifts) {
+                            // Check eligibility
+                            if (!doctor.allowedColumns || !doctor.allowedColumns.includes(column.id)) continue;
+                            if (preferences[doctor.id] && preferences[doctor.id][date] === 'blocked') continue;
+                            if (doctorDailyShifts[doctor.id][date]) continue; // Already has shift today
+                            
+                            // Use individual max if set, otherwise use global max
+                            const doctorMaxLimit = doctor.maxShifts !== null && doctor.maxShifts !== undefined 
+                                ? doctor.maxShifts 
+                                : rules.maxShiftsPerMonth;
+                            if (doctorShifts[doctor.id] >= doctorMaxLimit) continue;
+                            
+                            // **NEW: Only assign if doctor still has minShifts (strict balance)**
+                            const currentMinShifts = Math.min(...Object.values(doctorShifts));
+                            if (doctorShifts[doctor.id] > currentMinShifts) continue;
+                            
+                            // **Check weekday/weekend limits**
+                            if (!canDoctorWorkOnDate(doctor, date, doctorWeekdayShifts[doctor.id], doctorWeekendShifts[doctor.id])) {
+                                continue;
+                            }
+                            
+                            // Quick check for rest days (only check previous day)
+                            if (rules.minRestDays > 0) {
+                                const prevDate = new Date(date);
+                                prevDate.setDate(prevDate.getDate() - 1);
+                                const prevDateStr = prevDate.toISOString().split('T')[0];
+                                if (doctorDailyShifts[doctor.id][prevDateStr]) {
+                                    continue;
+                                }
+                            }
+                            
+                            // Quick check for consecutive days (only check if max is low)
+                            if (rules.maxConsecutiveDays > 0 && rules.maxConsecutiveDays <= 3) {
+                                let consecutiveDays = 0;
+                                for (let i = 1; i <= rules.maxConsecutiveDays; i++) {
+                                    const checkDate = new Date(date);
+                                    checkDate.setDate(checkDate.getDate() - i);
+                                    const checkDateStr = checkDate.toISOString().split('T')[0];
+                                    if (doctorDailyShifts[doctor.id][checkDateStr]) {
+                                        consecutiveDays++;
+                                    } else {
+                                        break;
+                                    }
+                                }
+                                if (consecutiveDays >= rules.maxConsecutiveDays) continue;
+                            }
+                            
+                            // Assign if this doctor has minimum shifts
+                            const currentMinShifts = Math.min(...Object.values(doctorShifts));
+                            if (doctorShifts[doctor.id] === currentMinShifts) {
+                                schedule[date][column.id] = doctor.id;
+                                doctorShifts[doctor.id]++;
+                                
+                                // Track weekday vs weekend
+                                if (isWeekend(date)) {
+                                    doctorWeekendShifts[doctor.id]++;
+                                } else {
+                                    doctorWeekdayShifts[doctor.id]++;
+                                }
+                                
+                                doctorDailyShifts[doctor.id][date] = 1;
+                                console.log(`Balance: Assigned ${doctor.name} to ${column.name} on ${date} (had ${currentMinShifts} shifts)`);
+                                
+                                // Check if we've achieved balance (max difference = 1)
+                                const newMin = Math.min(...Object.values(doctorShifts));
+                                const newMax = Math.max(...Object.values(doctorShifts));
+                                if (newMax - newMin <= 1) {
+                                    console.log('Achieved perfect balance! Stopping.');
+                                    return;
+                                }
+                                
+                                break; // Found a doctor for this slot, move to next slot
+                            }
+                        }
+                    }
+                }
+            }
+            
+            console.log(`Balance phase complete (${balanceAttempts} attempts)`);
+        }
+
+        function applyColumnLinks(weeklyAssignments, doctorShifts, doctorDailyShifts, doctorWeekdayShifts, doctorWeekendShifts) {
+            if (columnLinks.length === 0) return;
+
+            // For each column link
+            for (const link of columnLinks) {
+                const sourceColumnId = link.sourceId;
+                const targetColumnId = link.targetId;
+
+                // For each doctor
+                for (const doctor of doctors) {
+                    // Check if doctor can work in target column
+                    if (!doctor.allowedColumns.includes(targetColumnId)) continue;
+
+                    // For each day of week (0-6)
+                    for (let dayOfWeek = 0; dayOfWeek < 7; dayOfWeek++) {
+                        // Check if doctor has assignments in source column on this day of week
+                        if (weeklyAssignments[doctor.id][dayOfWeek] && 
+                            weeklyAssignments[doctor.id][dayOfWeek][sourceColumnId]) {
+                            
+                            const sourceDates = weeklyAssignments[doctor.id][dayOfWeek][sourceColumnId];
+                            
+                            // For each date in this day of week
+                            for (const sourceDate of sourceDates) {
+                                // Find other dates with same day of week in the month
+                                const sourceDateObj = new Date(sourceDate);
+                                const year = currentYear;
+                                const month = currentMonth;
+                                const daysInMonth = new Date(year, month + 1, 0).getDate();
+                                
+                                for (let day = 1; day <= daysInMonth; day++) {
+                                    const checkDate = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+                                    const checkDateObj = new Date(checkDate);
+                                    
+                                    // Same day of week but different date
+                                    if (checkDateObj.getDay() === dayOfWeek && checkDate !== sourceDate) {
+                                        // Check if target column is not already filled
+                                        if (!schedule[checkDate][targetColumnId]) {
+                                            // **CRITICAL: Check doctor can only have ONE shift per day**
+                                            const dailyCount = doctorDailyShifts[doctor.id][checkDate] || 0;
+                                            if (dailyCount > 0) {
+                                                continue; // Doctor already has a shift this day
+                                            }
+                                            
+                                            // Check other constraints
+                                            if (dailyCount < rules.maxShiftsPerDay && 
+                                                doctorShifts[doctor.id] < rules.maxShiftsPerMonth) {
+                                                
+                                                // Check if not blocked by preferences
+                                                if (!(preferences[doctor.id] && 
+                                                      preferences[doctor.id][checkDate] === 'blocked')) {
+                                                    
+                                                    // Assign to target column
+                                                    schedule[checkDate][targetColumnId] = doctor.id;
+                                                    doctorShifts[doctor.id]++;
+                                                    doctorDailyShifts[doctor.id][checkDate] = dailyCount + 1;
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        function displaySchedule(doctorShifts, doctorWeekdayShifts, doctorWeekendShifts) {
+            // Generate stats
+            const totalShifts = Object.values(doctorShifts).reduce((a, b) => a + b, 0);
+            const avgShifts = doctors.length > 0 ? (totalShifts / doctors.length).toFixed(1) : 0;
+            const filledSlots = Object.values(schedule).reduce((sum, day) => sum + Object.keys(day).length, 0);
+            const totalSlots = Object.keys(schedule).length * columns.length;
+            const fillRate = ((filledSlots / totalSlots) * 100).toFixed(0);
+
+            // Calculate standard deviation for balance measurement
+            const shiftCounts = Object.values(doctorShifts);
+            const mean = shiftCounts.reduce((a, b) => a + b, 0) / shiftCounts.length;
+            const variance = shiftCounts.reduce((sum, count) => sum + Math.pow(count - mean, 2), 0) / shiftCounts.length;
+            const stdDev = Math.sqrt(variance).toFixed(2);
+            
+            // Find min and max
+            const minShifts = Math.min(...shiftCounts);
+            const maxShifts = Math.max(...shiftCounts);
+
+            const statsHtml = `
+                <div class="stat-card">
+                    <div class="stat-number">${totalShifts}</div>
+                    <div class="stat-label">סה"כ תורנויות</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">${avgShifts}</div>
+                    <div class="stat-label">ממוצע לרופא</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">${minShifts} - ${maxShifts}</div>
+                    <div class="stat-label">טווח תורנויות</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" style="color: ${stdDev < 1.5 ? 'var(--success)' : stdDev < 2.5 ? 'var(--warning)' : 'var(--danger)'};">${stdDev}</div>
+                    <div class="stat-label">סטיית תקן ${stdDev < 1.5 ? '✅' : stdDev < 2.5 ? '⚠️' : '❌'}</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">${fillRate}%</div>
+                    <div class="stat-label">אחוז מילוי</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">${Object.keys(schedule).length}</div>
+                    <div class="stat-label">ימי עבודה</div>
+                </div>
+            `;
+            document.getElementById('scheduleStats').innerHTML = statsHtml;
+
+            // Generate table
+            const tableHtml = `
+                <thead>
+                    <tr>
+                        <th>רופא</th>
+                        <th>מספר תורנויות</th>
+                        <th>הערות</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    ${doctors.map(doctor => {
+                        const count = doctorShifts[doctor.id] || 0;
+                        const avgShifts = totalShifts / doctors.length;
+                        const diff = count - avgShifts;
+                        
+                        // Use individual max if set
+                        const maxLimit = doctor.maxShifts !== null && doctor.maxShifts !== undefined 
+                            ? doctor.maxShifts 
+                            : rules.maxShiftsPerMonth;
+                        
+                        let statusColor = 'inherit';
+                        let statusText = '';
+                        
+                        if (count < rules.minShiftsPerMonth) {
+                            statusColor = 'var(--danger)';
+                            statusText = `⚠️ מתחת למינימום (מינ׳ ${rules.minShiftsPerMonth})`;
+                        } else if (count > maxLimit) {
+                            statusColor = 'var(--danger)';
+                            statusText = `⚠️ מעל מקסימום (מקס׳ ${maxLimit})`;
+                        } else if (Math.abs(diff) < 0.5) {
+                            statusColor = 'var(--success)';
+                            statusText = '✅ מאוזן מעולה';
+                        } else if (Math.abs(diff) < 1.5) {
+                            statusColor = 'var(--success)';
+                            statusText = '✅ מאוזן';
+                        } else if (Math.abs(diff) < 2.5) {
+                            statusColor = 'var(--warning)';
+                            statusText = diff > 0 ? '⚠️ מעט מעל הממוצע' : '⚠️ מעט מתחת לממוצע';
+                        } else {
+                            statusColor = 'var(--danger)';
+                            statusText = diff > 0 ? '❌ הרבה מעל הממוצע' : '❌ הרבה מתחת לממוצע';
+                        }
+                        
+                        const limitText = doctor.maxShifts !== null && doctor.maxShifts !== undefined 
+                            ? ` (מקס׳ אישי: ${doctor.maxShifts})` 
+                            : '';
+                        
+                        return `
+                            <tr>
+                                <td><strong>${doctor.name}${limitText}</strong></td>
+                                <td style="text-align: center; color: ${statusColor}; font-weight: bold; font-size: 1.2em;">${count}</td>
+                                <td style="color: ${statusColor};">${statusText}</td>
+                            </tr>
+                        `;
+                    }).join('')}
+                    <tr style="border-top: 3px solid var(--primary); font-weight: bold; background: #f8f9fa;">
+                        <td>ממוצע</td>
+                        <td style="text-align: center;">${avgShifts}</td>
+                        <td></td>
+                    </tr>
+                </tbody>
+            `;
+            document.getElementById('scheduleTable').innerHTML = tableHtml;
+
+            // Generate calendar table
+            generateScheduleCalendarTable();
+
+            // Validate schedule
+            validateSchedule();
+        }
+
+        function generateScheduleCalendarTable() {
+            const table = document.getElementById('scheduleCalendarTable');
+            
+            let html = '<thead><tr><th class="date-cell">תאריך</th>';
+            columns.forEach(col => {
+                html += `<th><div class="column-header"><div class="column-number">${col.id + 1}</div><div class="column-name">${col.name}</div></div></th>`;
+            });
+            html += '</tr></thead><tbody>';
+
+            const dates = Object.keys(schedule).sort();
+            dates.forEach(date => {
+                const d = new Date(date);
+                const dayName = ['ראשון', 'שני', 'שלישי', 'רביעי', 'חמישי', 'שישי', 'שבת'][d.getDay()];
+                html += `<tr><td class="date-cell">${d.getDate()}/${d.getMonth() + 1} - ${dayName}</td>`;
+                
+                columns.forEach(col => {
+                    const doctorId = schedule[date][col.id];
+                    const doctor = doctors.find(d => d.id === doctorId);
+                    const className = doctor ? 'shift-cell assigned' : 'shift-cell';
+                    const content = doctor ? doctor.name.split(' ')[0] : '-';
+                    html += `<td class="${className}">${content}</td>`;
+                });
+                
+                html += '</tr>';
+            });
+
+            html += '</tbody>';
+            table.innerHTML = html;
+        }
+
+        function validateSchedule() {
+            const errors = [];
+            const doctorShiftCounts = {};
+
+            doctors.forEach(d => doctorShiftCounts[d.id] = 0);
+
+            // Check total shifts per doctor
+            Object.values(schedule).forEach(day => {
+                Object.values(day).forEach(doctorId => {
+                    if (doctorId) doctorShiftCounts[doctorId]++;
+                });
+            });
+
+            doctors.forEach(doctor => {
+                const count = doctorShiftCounts[doctor.id];
+                
+                // Use individual limit if set
+                const minLimit = rules.minShiftsPerMonth;
+                const maxLimit = doctor.maxShifts !== null && doctor.maxShifts !== undefined 
+                    ? doctor.maxShifts 
+                    : rules.maxShiftsPerMonth;
+                
+                if (count < minLimit) {
+                    errors.push(`${doctor.name}: פחות מהמינימום הנדרש (${count}/${minLimit})`);
+                }
+                if (count > maxLimit) {
+                    errors.push(`${doctor.name}: יותר מהמקסימום המותר (${count}/${maxLimit})`);
+                }
+            });
+
+            // **NEW: Check no doctor has multiple columns in same day**
+            Object.entries(schedule).forEach(([date, daySchedule]) => {
+                const doctorsThisDay = {};
+                Object.entries(daySchedule).forEach(([columnId, doctorId]) => {
+                    if (doctorId) {
+                        if (!doctorsThisDay[doctorId]) {
+                            doctorsThisDay[doctorId] = [];
+                        }
+                        doctorsThisDay[doctorId].push(parseInt(columnId));
+                    }
+                });
+
+                // Check if any doctor has more than one column
+                Object.entries(doctorsThisDay).forEach(([doctorId, columnIds]) => {
+                    if (columnIds.length > 1) {
+                        const doctor = doctors.find(d => d.id === parseInt(doctorId));
+                        const columnNames = columnIds.map(id => columns.find(c => c.id === id)?.name).join(', ');
+                        const d = new Date(date);
+                        errors.push(`${doctor?.name}: משובץ ביותר מעמודה אחת ב-${d.getDate()}/${d.getMonth() + 1} (${columnNames})`);
+                    }
+                });
+            });
+
+            const container = document.getElementById('validationErrors');
+            if (errors.length > 0) {
+                container.innerHTML = `
+                    <div class="validation-errors">
+                        <h3 style="margin-bottom: 15px; color: var(--danger);">⚠️ בעיות בשיבוץ:</h3>
+                        ${errors.map(err => `<div class="validation-error">${err}</div>`).join('')}
+                    </div>
+                `;
+            } else {
+                container.innerHTML = '<div class="alert alert-success">✅ השיבוץ תקין ועומד בכל הכללים!</div>';
+            }
+        }
+
+        function exportToCSV() {
+            let csv = 'תאריך,' + columns.map(c => c.name).join(',') + '\n';
+            
+            const dates = Object.keys(schedule).sort();
+            dates.forEach(date => {
+                const d = new Date(date);
+                const dateStr = `${d.getDate()}/${d.getMonth() + 1}/${d.getFullYear()}`;
+                csv += dateStr;
+                
+                columns.forEach(col => {
+                    const doctorId = schedule[date][col.id];
+                    const doctor = doctors.find(d => d.id === doctorId);
+                    csv += ',' + (doctor ? doctor.name : '');
+                });
+                csv += '\n';
+            });
+
+            downloadFile(csv, 'schedule.csv', 'text/csv');
+        }
+
+        function exportToText() {
+            let text = `לוח תורנויות - ${getMonthName(currentMonth)} ${currentYear}\n`;
+            text += '='.repeat(60) + '\n\n';
+
+            const dates = Object.keys(schedule).sort();
+            dates.forEach(date => {
+                const d = new Date(date);
+                text += `${d.getDate()}/${d.getMonth() + 1}:\n`;
+                
+                columns.forEach(col => {
+                    const doctorId = schedule[date][col.id];
+                    const doctor = doctors.find(d => d.id === doctorId);
+                    text += `  ${col.name}: ${doctor ? doctor.name : 'לא משובץ'}\n`;
+                });
+                text += '\n';
+            });
+
+            downloadFile(text, 'schedule.txt', 'text/plain');
+        }
+
+        function downloadFile(content, filename, type) {
+            const blob = new Blob(['\ufeff' + content], { type: type + ';charset=utf-8;' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = filename;
+            a.click();
+            URL.revokeObjectURL(url);
+        }
+
+        function getMonthName(month) {
+            const names = ['ינואר', 'פברואר', 'מרץ', 'אפריל', 'מאי', 'יוני', 
+                          'יולי', 'אוגוסט', 'ספטמבר', 'אוקטובר', 'נובמבר', 'דצמבר'];
+            return names[month];
+        }
+
+        function saveSchedule() {
+            saveData();
+            alert('✅ השיבוץ נשמר בהצלחה!');
+        }
+
+        function showDebugInfo() {
+            const debugPanel = document.getElementById('debugInfo');
+            const debugContent = document.getElementById('debugContent');
+            
+            let info = `מידע מערכת:\n`;
+            info += `================\n\n`;
+            info += `עמודות: ${columns.length}\n`;
+            columns.forEach((col, i) => {
+                info += `  ${i + 1}. ${col.name} (ID: ${col.id})\n`;
+            });
+            info += `\nרופאים: ${doctors.length}\n`;
+            doctors.forEach(doc => {
+                const allowedCols = doc.allowedColumns || [];
+                const colNames = allowedCols.map(id => columns.find(c => c.id === id)?.name || `עמודה ${id}`).join(', ');
+                info += `  • ${doc.name}:\n`;
+                info += `    - עמודות מורשות (${allowedCols.length}): ${colNames || 'אין!'}\n`;
+                
+                const prefs = preferences[doc.id] || {};
+                const preferred = Object.entries(prefs).filter(([_, t]) => t === 'preferred').length;
+                const blocked = Object.entries(prefs).filter(([_, t]) => t === 'blocked').length;
+                info += `    - העדפות: ${preferred} מועדפים, ${blocked} חסומים\n`;
+            });
+            
+            info += `\nכללים:\n`;
+            info += `  - תורנויות מינימום בחודש: ${rules.minShiftsPerMonth}\n`;
+            info += `  - תורנויות מקסימום בחודש: ${rules.maxShiftsPerMonth}\n`;
+            info += `  - תורנויות מינימום ביום: ${rules.minShiftsPerDay}\n`;
+            info += `  - תורנויות מקסימום ביום: ${rules.maxShiftsPerDay}\n`;
+            info += `  - ימי מנוחה מינימום: ${rules.minRestDays}\n`;
+            info += `  - ימים רצופים מקסימום: ${rules.maxConsecutiveDays}\n`;
+            
+            info += `\nקישורי עמודות: ${columnLinks.length}\n`;
+            columnLinks.forEach(link => {
+                const src = columns.find(c => c.id === link.sourceId)?.name;
+                const tgt = columns.find(c => c.id === link.targetId)?.name;
+                info += `  • ${src} → ${tgt}\n`;
+            });
+            
+            const totalSlots = Object.keys(schedule).length * columns.length;
+            const filledSlots = Object.values(schedule).reduce((sum, day) => sum + Object.keys(day).length, 0);
+            info += `\nשיבוץ:\n`;
+            info += `  - סה"כ משבצות: ${totalSlots}\n`;
+            info += `  - משבצות מלאות: ${filledSlots}\n`;
+            info += `  - אחוז מילוי: ${totalSlots > 0 ? ((filledSlots / totalSlots) * 100).toFixed(1) : 0}%\n`;
+            
+            debugContent.textContent = info;
+            debugPanel.style.display = 'block';
+            debugPanel.scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function saveData() {
+            localStorage.setItem('advancedSchedulerData', JSON.stringify({
+                columns,
+                doctors,
+                preferences,
+                rules,
+                schedule,
+                currentYear,
+                currentMonth,
+                columnLinks
+            }));
+        }
+
+        function loadData() {
+            const data = localStorage.getItem('advancedSchedulerData');
+            if (data) {
+                const parsed = JSON.parse(data);
+                columns = parsed.columns || [];
+                doctors = parsed.doctors || [];
+                preferences = parsed.preferences || {};
+                rules = parsed.rules || rules;
+                schedule = parsed.schedule || {};
+                currentYear = parsed.currentYear || currentYear;
+                currentMonth = parsed.currentMonth || currentMonth;
+                columnLinks = parsed.columnLinks || [];
+
+                if (rules) {
+                    document.getElementById('minShiftsPerMonth').value = rules.minShiftsPerMonth;
+                    document.getElementById('maxShiftsPerMonth').value = rules.maxShiftsPerMonth;
+                    document.getElementById('minShiftsPerDay').value = rules.minShiftsPerDay;
+                    document.getElementById('maxShiftsPerDay').value = rules.maxShiftsPerDay;
+                    document.getElementById('minRestDays').value = rules.minRestDays;
+                    document.getElementById('maxConsecutiveDays').value = rules.maxConsecutiveDays;
+                }
+
+                if (columns.length > 0) {
+                    document.getElementById('numColumns').value = columns.length;
+                }
+
+                updateDoctorsList();
+                updateColumnLinkSelects();
+                displayColumnLinks();
+            }
+        }
+    </script>
+</body>
+</html>
